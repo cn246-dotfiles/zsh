@@ -1,0 +1,8 @@
+if command -v nmap &> /dev/null; then
+  nmap -p 443 --script ssl-cert "${1}"
+else
+  curl --insecure -vvI https://"${1}" 2>&1 | awk 'BEGIN { cert=0 }
+    /^\* SSL connection/ { cert=1 } /^\*/ { if (cert) print }'
+fi
+
+# vim: ft=zsh ts=2 sts=2 sw=2 sr et

@@ -1,0 +1,4 @@
+find . -maxdepth 1 -mindepth 1 -type d -exec \
+  sh -c '(echo $1 && cd $1 && git fetch --all; git status -uno && echo)' _ {} \;
+
+# vim: ft=zsh ts=2 sts=2 sw=2 sr et

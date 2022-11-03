@@ -1,0 +1,8 @@
+# Aliases
+alias cp='cp -i'
+alias la='ls -A'
+alias ll='ls -alF'
+alias ls='ls -hG'
+alias mkdir='mkdir -p'
+alias mv='mv -i'
+alias rm='rm -i'
