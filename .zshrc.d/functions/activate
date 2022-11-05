@@ -1,0 +1,28 @@
+option="$1"
+
+case "${option}" in
+  '')
+    venv="$(pwd)"
+    ;;
+  aws)
+    venv="$HOME/Projects/aws"
+    ;;
+  ansible)
+    venv="$HOME/Projects/ansible"
+    ;;
+  *)
+    printf '%s\n' "Sorry, no venv has been configured for that argument."
+    exit 1
+    ;;
+esac
+
+if [ -d "${venv}/venv" ]; then
+  source "${venv}/venv/bin/activate"
+  unset venv
+else
+  printf '%s\n' "Could not find a venv directory at the specified location (${venv})."
+  unset venv
+  exit 1
+fi
+
+# vim: ft=zsh ts=2 sts=2 sw=2 sr et
