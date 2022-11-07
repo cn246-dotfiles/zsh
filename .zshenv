@@ -21,6 +21,11 @@ export LESSOPEN="|/opt/homebrew/bin/lesspipe.sh %s"
 # PYTHON
 export PYTHONUSERBASE="$HOME/.local"
 
+# SSH Keys
+if ! ssh-add -q -L >/dev/null; then
+  ssh-add --apple-load-keychain
+fi
+
 # ZSH Aliases
 if [ -d ~/.zshrc.d/aliases ]; then
   for file in ~/.zshrc.d/aliases/*; do
