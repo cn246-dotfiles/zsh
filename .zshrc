@@ -73,4 +73,3 @@ zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 plugins=(aws gpg-agent vi-mode)
 
 source $ZSH/oh-my-zsh.sh
-source ~/.config/iterm2/iterm2_shell_integration.zsh
