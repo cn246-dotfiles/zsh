@@ -21,6 +21,10 @@ export LESSOPEN="|/opt/homebrew/bin/lesspipe.sh %s"
 # PYTHON
 export PYTHONUSERBASE="$HOME/.local"
 
+if [[ -n $VIRTUAL_ENV && -e "${VIRTUAL_ENV}/bin/activate" ]]; then
+  source "${VIRTUAL_ENV}/bin/activate"
+fi
+
 # SSH Keys
 if ! ssh-add -q -L >/dev/null; then
   ssh-add --apple-load-keychain
