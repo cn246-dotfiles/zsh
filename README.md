@@ -1,8 +1,9 @@
 # ZSH
 
-Here be my zsh dotfiles. I started my zsh journey using oh-my-zsh, but realized
-that I don't need all the extras that come with it. So I stripped the parts that
-I liked and modified the things to meet my current needs.
+Here be my zsh dotfiles. I started my zsh journey using [oh-my-zsh](https://ohmyz.sh/),
+but realized that I don't need all the extras that come with it.
+
+So I stripped the parts that I liked and modified all the things to meet my current needs.
 
 ----
 
