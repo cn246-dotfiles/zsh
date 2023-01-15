@@ -5,3 +5,5 @@ elif [ $# -eq 1 ]; then
 else
     printf '%s\n'  "Usage: listening [pattern]"
 fi
+
+# vim: ft=zsh ts=2 sts=2 sw=2 sr et
