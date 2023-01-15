@@ -49,7 +49,7 @@ done
 ###################
 # Load config files
 ###################
-for config_file ("$ZDOTDIR/lib/*.zsh"); do
+for config_file ("$ZDOTDIR"/lib/*.zsh); do
   source "$config_file"
 done
 
@@ -86,8 +86,8 @@ zle -N bracketed-paste bracketed-paste-magic
 ###################
 # Functions
 ###################
-if [ -d "$ZDOTDIR/functions" ]; then
-  for file ("$ZDOTDIR/functions/*"); do
+if [ -d "$ZDOTDIR"/functions ]; then
+  for file ("$ZDOTDIR"/functions/*); do
     autoload -U "$file"
   done
 fi
@@ -98,9 +98,9 @@ fi
 ###################
 setopt prompt_subst
 
-if [ -d "$ZDOTDIR/prompts" ]; then
-  fpath=("$ZDOTDIR/prompts" $fpath)
-  for file ("$ZDOTDIR/prompts/*"); do
+if [ -d "$ZDOTDIR"/prompts ]; then
+  fpath=("$ZDOTDIR"/prompts $fpath)
+  for file ("$ZDOTDIR"/prompts/*); do
     autoload -U "$file"
   done
 fi
