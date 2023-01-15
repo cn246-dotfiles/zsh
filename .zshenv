@@ -1,6 +1,10 @@
+# ZSH
+export ZDOTDIR="$HOME/.config/zsh"
+export HISTFILE="$ZDOTDIR/.zsh_history"
+
 # PATH
 typeset -U path
-path=(~/.local/bin $path)
+path=("$HOME/.local/bin" $path)
 export PATH
 
 # EDITOR
@@ -26,25 +30,8 @@ if [[ -n $VIRTUAL_ENV && -e "${VIRTUAL_ENV}/bin/activate" ]]; then
 fi
 
 # SSH Keys
-if ! ssh-add -q -L >/dev/null; then
-  ssh-add --apple-load-keychain
-fi
-
-# ZSH Aliases
-if [ -d ~/.zshrc.d/aliases ]; then
-  for file in ~/.zshrc.d/aliases/*; do
-    if [ -r "$file" ]; then
-      . "$file"
-    fi
-  done
-fi
-
-# ZSH Functions
-if [ -d ~/.zshrc.d/functions ]; then
-  fpath=(~/.zshrc.d/functions $fpath)
-  for file in ~/.zshrc.d/functions/*; do
-    if [ -r "$file" ]; then
-      autoload -U "$file"
-    fi
-  done
+if ! [[ ( -v SSH_CONNECTION || -v SSH_TTY ) ]]; then
+  if ! ssh-add -q -L >/dev/null; then
+    ssh-add --apple-load-keychain
+  fi
 fi

@@ -1,0 +1,91 @@
+prompt_chaz_help () {
+  cat <<'EOF'
+
+  prompt chaz [<color1> [<color2> [<color3> [<color4> [<color5>]]]]]
+
+  defaults are white, blue, green, yellow, and red, respectively.
+
+  Brackets are '<color1>'
+  User and host are '<color2>' unless root, then it's '<color5>'
+  Current working directory is '<color3>'
+  Chroot and Docker is '<color4>'
+
+EOF
+}
+
+prompt_chaz_setup() {
+  autoload -Uz vcs_info
+
+  zstyle ':vcs_info:*' enable git
+  zstyle ':vcs_info:*' check-for-changes true
+
+  # Configure vcs_info
+  zstyle ':vcs_info:*' check-for-changes true
+  zstyle ':vcs_info:*' stagedstr '+'
+  zstyle ':vcs_info:*' unstagedstr '*'
+  zstyle ':vcs_info:git:*' formats '(%b %u%c)'
+  zstyle ':vcs_info:git:*' actionformats '(%b| %a%u%c)'
+
+  local -a pcc
+  local -A pc
+  local p_cwd p_end p_host p_prefix p_suffix p_user p_vcs
+
+  pcc[1]=${1:-'white'}
+  pcc[2]=${2:-${${SSH_CLIENT+'orange'}:-'blue'}}
+  pcc[3]=${3:-'green'}
+  pcc[4]=${4:-'yellow'}
+  pcc[5]=${5:-'red'}
+
+  pc['1o']="%F{$pcc[1]}[%f"
+  pc['1c']="%F{$pcc[1]}]%f"
+  pc['2o']="%F{$pcc[1]}<%f"
+  pc['2c']="%F{$pcc[1]}>%f"
+  pc['3o']="%F{$pcc[1]}%(%f"
+  pc['3c']="%F{$pcc[1]}%)%f"
+
+  p_prefix="$pc['1o']"
+  p_user="%F{$pcc[2]}%n%f"
+  p_host="%F{$pcc[2]}%m%f"
+  p_cwd="%F{$pcc[3]}%1~%f"
+  p_suffix="$pc['1c']"
+  p_vcs="%(2v.%2v.)"
+  p_end='%(!.#.$) '
+
+  if [[ -n "$SSH_CONNECTION" ]]; then
+    p_prefix="$pc['3o']%F$pcc[2]%[$(echo $SSH_CONNECTION | cut -d' ' -f1)]%f$pc['3c']$pc['1o']"
+  elif [[ -r /etc/debian_chroot ]]; then
+    p_prefix="$pc['3o']%F$pcc[4]chroot:[$(cat /etc/debian_chroot) | cut -d' ' -f1)]%f$pc['3c']$pc['1o']"
+  elif [[ -r /.dockerenv ]]; then
+    p_prefix="$pc['3o']%F$pcc[4]docker%f$pc['3c']$pc['1o']"
+  fi
+
+  if [[ $UID = 0 ]]; then
+    # always use red for root sessions, even in ssh
+    p_user="%F{$pcc[5]}%n%f"
+  fi
+
+  prompt=$p_prefix$p_user@$p_host:$p_cwd$p_suffix$p_vcs$p_end
+
+  RPROMPT="$p_prefix%F{$pcc[5]}%?%f$p_suffix"
+
+  add-zsh-hook precmd prompt_chaz_precmd
+}
+
+
+prompt_chaz_precmd() {
+  setopt noxtrace noksharrays localoptions
+  local exitstatus=$?
+  local git_dir git_ref
+
+  psvar=()
+  [[ $exitstatus -ge 128 ]] && psvar[1]=" $signals[$exitstatus-127]" || psvar[1]=""
+
+  [[ -o interactive ]] && jobs -l
+
+  vcs_info
+  [[ -n $vcs_info_msg_0_ ]] && psvar[2]="$vcs_info_msg_0_"
+}
+
+prompt_chaz_setup "$@"
+
+# vim: ft=zsh ts=2 sts=2 sw=2 sr et
