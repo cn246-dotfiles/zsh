@@ -11,7 +11,8 @@ if ! [ -z "$filename" ]; then
 
 # vim: ft=perl ts=2 sts=2 sw=2 sr et
 EOF
-    vim +6 -c 'startinsert' "$filename"
+    #vim +6 -c 'startinsert' "$filename"
+    vim +6 "$filename"
   else
     mkuhoh "$filename"
   fi
