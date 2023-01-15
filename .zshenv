@@ -1,6 +1,6 @@
 # ZSH
 export ZDOTDIR="$HOME/.config/zsh"
-export HISTFILE="$ZDOTDIR/.zsh_history"
+export HISTFILE="$ZDOTDIR/log/zsh_history"
 
 # PATH
 typeset -U path
