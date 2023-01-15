@@ -1,5 +1,6 @@
 # ZSH
 export ZDOTDIR="$HOME/.config/zsh"
+export HIST_STAMPS="mm/dd/yyyy"
 export HISTFILE="$ZDOTDIR/log/zsh_history"
 
 # PATH
@@ -35,3 +36,5 @@ if ! [[ ( -v SSH_CONNECTION || -v SSH_TTY ) ]]; then
     ssh-add --apple-load-keychain
   fi
 fi
+
+# vim: ft=zsh ts=2 sts=2 sw=2 sr et
