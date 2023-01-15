@@ -1,3 +1,5 @@
+# https://github.com/zsh-users/zsh/blob/master/Misc/vcs_info-examples
+
 prompt_chaz_help () {
   cat <<'EOF'
 
@@ -21,9 +23,10 @@ prompt_chaz_setup() {
 
   # Configure vcs_info
   zstyle ':vcs_info:*' check-for-changes true
+  zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
   zstyle ':vcs_info:*' stagedstr '+'
   zstyle ':vcs_info:*' unstagedstr '*'
-  zstyle ':vcs_info:git:*' formats '(%b %u%c)'
+  zstyle ':vcs_info:git:*' formats '(%b%u%c)'
   zstyle ':vcs_info:git:*' actionformats '(%b| %a%u%c)'
 
   local -a pcc
@@ -73,7 +76,7 @@ prompt_chaz_setup() {
 
 
 prompt_chaz_precmd() {
-  setopt noxtrace noksharrays localoptions
+  setopt noxtrace noksharrays localoptions prompt_subst
   local exitstatus=$?
   local git_dir git_ref
 
@@ -84,6 +87,13 @@ prompt_chaz_precmd() {
 
   vcs_info
   [[ -n $vcs_info_msg_0_ ]] && psvar[2]="$vcs_info_msg_0_"
+}
+
++vi-git-untracked(){
+  if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
+    git status --porcelain | grep -q '^?? ' 2> /dev/null ; then
+    hook_com[staged]+='%'
+  fi
 }
 
 prompt_chaz_setup "$@"
