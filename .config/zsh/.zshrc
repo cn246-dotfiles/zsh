@@ -36,6 +36,7 @@ fpath=("$ZDOTDIR/functions" "$ZDOTDIR/completions" $fpath)
 # Load all stock functions (from $fpath files) called below.
 autoload -U compaudit compinit zrecompile
 
+
 ###################
 # Plugins
 ###################
@@ -124,3 +125,5 @@ prompt chaz
 # Extras
 ###################
 umask 077
+
+# vim: ft=zsh ts=2 sts=2 sw=2 sr et
