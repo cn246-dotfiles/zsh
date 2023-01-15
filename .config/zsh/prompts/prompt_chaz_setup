@@ -1,16 +1,34 @@
+# Based off of: /usr/share/zsh/5.8.1/functions/prompt_clint_setup
+# https://zsh.sourceforge.io/Doc/Release/User-Contributions.html#Version-Control-Information
 # https://github.com/zsh-users/zsh/blob/master/Misc/vcs_info-examples
+# https://zsh.sourceforge.io/Doc/Release/Zsh-Modules.html#The-zsh_002fzutil-Module
 
 prompt_chaz_help () {
   cat <<'EOF'
 
   prompt chaz [<color1> [<color2> [<color3> [<color4> [<color5>]]]]]
 
-  defaults are white, blue, green, yellow, and red, respectively.
+  Defaults are white, blue, green, yellow, and red, respectively.
 
-  Brackets are '<color1>'
-  User and host are '<color2>' unless root, then it's '<color5>'
+  Surrounding brackets are '<color1>'
+  User and host are '<color2>'.
+  If root, then user is '<color5>'
   Current working directory is '<color3>'
-  Chroot and Docker is '<color4>'
+
+  # Additional Prompts (Left of PS1)
+  If SSH connection, display IP address and color user/host orange.
+  Debian chroot and Docker are '<color4>'
+
+  # Additional Prompts (Right of PS1)
+  Git status:
+    - branch name
+    - untracked file (%)
+    - unstaged file (*)
+    - staged file (+)
+    - commits ahead/behind remote (+N/-N)
+
+  # RPROMPT
+  Exit code of last command
 
 EOF
 }
@@ -22,12 +40,14 @@ prompt_chaz_setup() {
   zstyle ':vcs_info:*' check-for-changes true
 
   # Configure vcs_info
+  #zstyle ':vcs_info:git:*' use-simple true
   zstyle ':vcs_info:*' check-for-changes true
   zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
+  zstyle ':vcs_info:git*+set-message:*' hooks git-st
   zstyle ':vcs_info:*' stagedstr '+'
   zstyle ':vcs_info:*' unstagedstr '*'
-  zstyle ':vcs_info:git:*' formats '(%b%u%c)'
-  zstyle ':vcs_info:git:*' actionformats '(%b| %a%u%c)'
+  zstyle ':vcs_info:git:*' formats '(%b%u%c%m)'
+  zstyle ':vcs_info:git:*' actionformats '(%b|%a%u%c%m)'
 
   local -a pcc
   local -A pc
@@ -94,6 +114,26 @@ prompt_chaz_precmd() {
     git status --porcelain | grep -q '^?? ' 2> /dev/null ; then
     hook_com[staged]+='%'
   fi
+}
+
+function +vi-git-st() {
+    local ahead behind
+    local -a gitstatus
+
+    # Exit early in case the worktree is on a detached HEAD
+    git rev-parse ${hook_com[branch]}@{upstream} >/dev/null 2>&1 || return 0
+
+    local -a ahead_and_behind=(
+        $(git rev-list --left-right --count HEAD...${hook_com[branch]}@{upstream} 2>/dev/null)
+    )
+
+    ahead=${ahead_and_behind[1]}
+    behind=${ahead_and_behind[2]}
+
+    (( $ahead )) && gitstatus+=( "+${ahead}" )
+    (( $behind )) && gitstatus+=( "-${behind}" )
+
+    hook_com[misc]+=${(j:/:)gitstatus}
 }
 
 prompt_chaz_setup "$@"
