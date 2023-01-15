@@ -109,31 +109,33 @@ prompt_chaz_precmd() {
   [[ -n $vcs_info_msg_0_ ]] && psvar[2]="$vcs_info_msg_0_"
 }
 
-+vi-git-untracked(){
+
++vi-git-untracked() {
   if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
     git status --porcelain | grep -q '^?? ' 2> /dev/null ; then
     hook_com[staged]+='%'
   fi
 }
 
-function +vi-git-st() {
-    local ahead behind
-    local -a gitstatus
 
-    # Exit early in case the worktree is on a detached HEAD
-    git rev-parse ${hook_com[branch]}@{upstream} >/dev/null 2>&1 || return 0
++vi-git-st() {
+  local ahead behind
+  local -a gitstatus
 
-    local -a ahead_and_behind=(
-        $(git rev-list --left-right --count HEAD...${hook_com[branch]}@{upstream} 2>/dev/null)
-    )
+  # Exit early in case the worktree is on a detached HEAD
+  git rev-parse ${hook_com[branch]}@{upstream} >/dev/null 2>&1 || return 0
 
-    ahead=${ahead_and_behind[1]}
-    behind=${ahead_and_behind[2]}
+  local -a ahead_and_behind=(
+    $(git rev-list --left-right --count HEAD...${hook_com[branch]}@{upstream} 2>/dev/null)
+  )
 
-    (( $ahead )) && gitstatus+=( "+${ahead}" )
-    (( $behind )) && gitstatus+=( "-${behind}" )
+  ahead=${ahead_and_behind[1]}
+  behind=${ahead_and_behind[2]}
 
-    hook_com[misc]+=${(j:/:)gitstatus}
+  (( $ahead )) && gitstatus+=( " +${ahead}" )
+  (( $behind )) && gitstatus+=( " -${behind}" )
+
+  hook_com[misc]+=${(j:/:)gitstatus}
 }
 
 prompt_chaz_setup "$@"
