@@ -25,14 +25,14 @@ setopt complete_in_word
 
 autoload -Uz compinit && compinit
 # #q expands globs in conditional expressions
-if [[ $ZSH_COMP_DUMP(#qNmh-20) ]]; then
+if [[ $ZCOMPDUMP(#qNmh-20) ]]; then
   # -C (skip function check) implies -i (skip security check).
-  compinit -C -d "$ZSH_COMP_DUMP"
+  compinit -C -d "$ZCOMPDUMP"
 else
-  mkdir -p "$ZSH_COMP_DUMP:h"
-  compinit -i -d "$ZSH_COMP_DUMP"
+  mkdir -p "$ZCOMPDUMP:h"
+  compinit -i -d "$ZCOMPDUMP"
   # Keep $_comp_path younger than cache time even if it isn't regenerated.
-  touch "$ZSH_COMP_DUMP"
+  touch "$ZCOMPDUMP"
 fi
 
 
