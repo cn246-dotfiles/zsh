@@ -54,7 +54,7 @@ prompt_chaz_setup() {
   local p_cwd p_end p_host p_prefix p_suffix p_user p_vcs
 
   pcc[1]=${1:-'white'}
-  pcc[2]=${2:-${${SSH_CLIENT+'orange'}:-'blue'}}
+  pcc[2]=${2:-${${SSH_CLIENT+'yellow'}:-'blue'}}
   pcc[3]=${3:-'green'}
   pcc[4]=${4:-'yellow'}
   pcc[5]=${5:-'red'}
@@ -63,7 +63,7 @@ prompt_chaz_setup() {
   pc['1c']="%F{$pcc[1]}]%f"
   pc['2o']="%F{$pcc[1]}<%f"
   pc['2c']="%F{$pcc[1]}>%f"
-  pc['3o']="%F{$pcc[1]}%(%f"
+  pc['3o']="%F{$pcc[1]}(%f"
   pc['3c']="%F{$pcc[1]}%)%f"
 
   p_prefix="$pc['1o']"
@@ -73,13 +73,16 @@ prompt_chaz_setup() {
   p_suffix="$pc['1c']"
   p_vcs="%(2v.%2v.)"
   p_end='%(!.#.$) '
+  p_exit="%F{$pcc[5]}%?%f"
 
   if [[ -n "$SSH_CONNECTION" ]]; then
-    p_prefix="$pc['3o']%F$pcc[2]%[$(echo $SSH_CONNECTION | cut -d' ' -f1)]%f$pc['3c']$pc['1o']"
+    remote_ip='$(echo $SSH_CONNECTION | cut -d" " -f1)'
   elif [[ -r /etc/debian_chroot ]]; then
-    p_prefix="$pc['3o']%F$pcc[4]chroot:[$(cat /etc/debian_chroot) | cut -d' ' -f1)]%f$pc['3c']$pc['1o']"
+    chroot='$(cat /etc/debian_chroot | cut -d" " -f1)'
+    p_prefix="$pc['3o']$chroot$pc['3c']$pc['1o']"
   elif [[ -r /.dockerenv ]]; then
-    p_prefix="$pc['3o']%F$pcc[4]docker%f$pc['3c']$pc['1o']"
+    docker="docker"
+    p_prefix="$pc['3o']$docker$pc['3c']$pc['1o']"
   fi
 
   if [[ $UID = 0 ]]; then
@@ -89,7 +92,11 @@ prompt_chaz_setup() {
 
   prompt=$p_prefix$p_user@$p_host:$p_cwd$p_suffix$p_vcs$p_end
 
-  RPROMPT="$p_prefix%F{$pcc[5]}%?%f$p_suffix"
+  if [[ -n "$remote_ip" ]]; then
+    RPROMPT="$pc['3o']$remote_ip$pc['3c'] $p_prefix$p_exit$p_suffix"
+  else
+    RPROMPT="$p_prefix$p_exit$p_suffix"
+  fi
 
   add-zsh-hook precmd prompt_chaz_precmd
 }
