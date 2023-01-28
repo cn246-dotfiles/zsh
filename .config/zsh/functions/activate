@@ -12,7 +12,6 @@ case "${option}" in
     ;;
   *)
     printf '%s\n' "Sorry, no venv has been configured for that argument."
-    exit 1
     ;;
 esac
 
@@ -22,7 +21,6 @@ if [ -d "${venv}/venv" ]; then
 else
   printf '%s\n' "Could not find a venv directory at the specified location (${venv})."
   unset venv
-  exit 1
 fi
 
 # vim: ft=zsh ts=2 sts=2 sw=2 sr et
