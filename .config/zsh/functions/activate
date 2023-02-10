@@ -1,26 +1,29 @@
 option="$1"
 
+venv_base_dir="$HOME/Projects/venvs"
+
 case "${option}" in
-  '')
-    venv="$(pwd)"
-    ;;
   aws)
-    venv="$HOME/Projects/aws"
+    venv_path="${venv_base_dir}/aws"
     ;;
-  ansible)
-    venv="$HOME/Projects/ansible"
+  '' | ansible)
+    venv_path="${venv_base_dir}/ansible"
     ;;
   *)
-    printf '%s\n' "Sorry, no venv has been configured for that argument."
+    printf '%s\n' "Sorry, a venv has not been configured for that argument."
+    printf '%s\n' "Available venvs in ${venv_base_dir}:"
+    find ${venv_base_dir} -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | nl
+    return 1
     ;;
 esac
 
-if [ -d "${venv}/venv" ]; then
-  source "${venv}/venv/bin/activate"
-  unset venv
+if [ -d "${venv_path}" ]; then
+  source "${venv_path}/bin/activate"
+  unset venv_path
 else
-  printf '%s\n' "Could not find a venv directory at the specified location (${venv})."
-  unset venv
+  printf '%s\n' "Could not find a venv at the specified location (${venv_path})."
+  unset venv_path
+  return 1
 fi
 
 # vim: ft=zsh ts=2 sts=2 sw=2 sr et
