@@ -1,13 +1,13 @@
 option="$1"
 
-venv_base_dir="$HOME/Projects/venvs"
+venv_base_dir="$HOME/.local/lib/venv"
 
 case "${option}" in
-  aws)
-    venv_path="${venv_base_dir}/aws"
-    ;;
   '' | ansible)
     venv_path="${venv_base_dir}/ansible"
+    ;;
+  aws)
+    venv_path="${venv_base_dir}/aws"
     ;;
   *)
     printf '%s\n' "Sorry, a venv has not been configured for that argument."
@@ -19,6 +19,19 @@ esac
 
 if [ -d "${venv_path}" ]; then
   source "${venv_path}/bin/activate"
+
+  if [ ${venv_path} = "${venv_base_dir}/ansible" ]; then
+    eval $(register-python-argcomplete ansible)
+    eval $(register-python-argcomplete ansible-config)
+    eval $(register-python-argcomplete ansible-console)
+    eval $(register-python-argcomplete ansible-doc)
+    eval $(register-python-argcomplete ansible-galaxy)
+    eval $(register-python-argcomplete ansible-inventory)
+    eval $(register-python-argcomplete ansible-playbook)
+    eval $(register-python-argcomplete ansible-pull)
+    eval $(register-python-argcomplete ansible-vault)
+  fi
+
   unset venv_path
 else
   printf '%s\n' "Could not find a venv at the specified location (${venv_path})."
