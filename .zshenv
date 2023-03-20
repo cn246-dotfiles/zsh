@@ -21,9 +21,10 @@ export HOMEBREW_NO_ANALYTICS=1
 # LESS
 export PAGER=less
 export LESS='--mouse -F -i -R -Q -J -M -W -X -x4 -z-4'
-export LESSOPEN="|/opt/homebrew/bin/lesspipe.sh %s"
+export LESSOPEN="|$HOME/.local/bin/lesspipe.sh %s"
 
 # PYTHON
+export PYTHONPATH="$HOME/Projects/python/modules"
 export PYTHONUSERBASE="$HOME/.local"
 
 if [[ -n $VIRTUAL_ENV && -e "${VIRTUAL_ENV}/bin/activate" ]]; then
