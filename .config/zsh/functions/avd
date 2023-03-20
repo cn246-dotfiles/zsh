@@ -1,3 +1,13 @@
-ansible-vault decrypt "${@}"
+venv_name="ansible"
+venv_base_dir="$HOME/.local/lib/venv"
+venv_path="${venv_base_dir}/${venv_name}"
+
+if [ "$VIRTUAL_ENV" = "${venv_path}" ]; then
+  ansible-vault decrypt "${@}"
+else
+  # shellcheck source=/dev/null
+  . "${venv_path}/bin/activate"
+  ansible-vault edit "${@}"
+fi
 
 # vim: ft=zsh ts=2 sts=2 sw=2 sr et
