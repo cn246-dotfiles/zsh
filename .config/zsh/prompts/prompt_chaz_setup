@@ -37,13 +37,14 @@ prompt_chaz_setup() {
   autoload -Uz vcs_info
 
   zstyle ':vcs_info:*' enable git
+  #zstyle ':vcs_info:*' debug true
+
   zstyle ':vcs_info:*' check-for-changes true
 
   # Configure vcs_info
   #zstyle ':vcs_info:git:*' use-simple true
   zstyle ':vcs_info:*' check-for-changes true
-  zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
-  zstyle ':vcs_info:git*+set-message:*' hooks git-st
+  zstyle ':vcs_info:git*+set-message:*' hooks git-untracked git-st
   zstyle ':vcs_info:*' stagedstr '+'
   zstyle ':vcs_info:*' unstagedstr '*'
   zstyle ':vcs_info:git:*' formats '(%b%u%c%m)'
