@@ -3,20 +3,10 @@ export ZDOTDIR="$HOME/.config/zsh"
 export HIST_STAMPS="mm/dd/yyyy"
 export HISTFILE="$ZDOTDIR/log/zsh_history"
 
-# PATH
-typeset -U path
-path=("$HOME/.local/bin" $path)
-export PATH
-
 # EDITOR
 export EDITOR=vim
 export VISUAL=$EDITOR
 export SUDO_EDITOR=$EDITOR
-
-# HOMEBREW
-eval "$(/opt/homebrew/bin/brew shellenv)"
-FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-export HOMEBREW_NO_ANALYTICS=1
 
 # LESS
 export PAGER=less
