@@ -14,14 +14,14 @@ bindkey -M menuselect '^xh' accept-and-hold                # Hold
 bindkey -M menuselect '^xn' accept-and-infer-next-history  # Next
 bindkey -M menuselect '^xu' undo                           # Undo
 
-
 # Options
 _comp_options+=(globdots)
 setopt menu_complete
+#setopt noautomenu
+#setopt nomenucomplete
 setopt auto_list
 setopt complete_in_word
 #setopt always_to_end
-
 
 autoload -Uz compinit && compinit
 # #q expands globs in conditional expressions
@@ -35,16 +35,13 @@ else
   touch "$ZCOMPDUMP"
 fi
 
-
 # Defaults
 zstyle ':completion:*:*:*:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:default' list-prompt '%S%M matches%s'
 
-
 # Use caching so that commands like apt and dpkg complete are useable
 zstyle ':completion:*' use-cache yes
 zstyle ':completion:*' cache-path $ZSH_CACHE_DIR
-
 
 # case insensitive (all), partial-word and substring completion
 if [[ "$CASE_SENSITIVE" = true ]]; then
@@ -55,15 +52,6 @@ else
   unsetopt CASE_GLOB
 fi
 unset CASE_SENSITIVE
-
-
-#if [[ "$HYPHEN_INSENSITIVE" = true ]]; then
-#    zstyle ':completion:*' matcher-list 'm:{a-zA-Z-_}={A-Za-z_-}' 'r:|=*' 'l:|=* r:|=*'
-#  else
-#    zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
-#fi
-#unset HYPHEN_INSENSITIVE
-
 
 # Group matches and describe
 zstyle ':completion:*:*:*:*:*' menu select
@@ -83,14 +71,11 @@ zstyle ':completion:*' completer _extensions _complete _approximate
 zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:approximate:*' max-errors 1 numeric
 
-
 # Complete the alias when _expand_alias is used as a function
 zstyle ':completion:*' complete true
 
-
 # Autocomplete options for cd instead of directory stack
 zstyle ':completion:*' complete-options true
-
 
 # Array completion element sorting.
 zstyle ':completion:*:*:-subscript-:*' tag-order indexes parameters
@@ -109,12 +94,10 @@ zstyle ':completion:*:history-words' remove-all-dups yes
 zstyle ':completion:*:history-words' list false
 zstyle ':completion:*:history-words' menu yes
 
-
 # Expand aliases each time you hit CTRL+a
 #zle -C alias-expension complete-word _generic
 #bindkey '^Xa' alias-expension
 #zstyle ':completion:alias-expension:*' completer _expand_alias
-
 
 zstyle ':completion:*:(rm|kill|diff):*' ignore-line other
 zstyle ':completion:*:rm:*' file-patterns '*:all-files'
@@ -123,13 +106,11 @@ zstyle ':completion:*:rm:*' file-patterns '*:all-files'
 zstyle ':completion:*:*:-command-:*:*' group-order aliases builtins functions commands
 zstyle ':completion:*' keep-prefix true
 
-
 zstyle -e ':completion:*:hosts' hosts 'reply=(
   ${=${${${${(@M)${(f)"$(cat ~/.ssh/config 2> /dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
   ${=${${${${(@M)${(f)"$(cat ~/.ssh/config.d/*.config 2> /dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
   ${=${=${=${${(f)"$(cat {/etc/ssh/ssh_,~/.ssh/}known_hosts(|2)(N) 2> /dev/null)"}%%[#| ]*}//\]:[0-9]*/ }//,/ }//\[/ }
 )'
-
 
 # Don't complete uninteresting users
 zstyle ':completion:*:*:*:users' ignored-patterns \
@@ -149,14 +130,12 @@ zstyle '*' single-ignored show
 zstyle ':completion:*:(rm|kill|diff):*' ignore-line other
 zstyle ':completion:*:rm:*' file-patterns '*:all-files'
 
-
 #  Processes
 zstyle ':completion:*:*:*:*:processes' command 'ps -u $LOGNAME -o pid,user,command -w'
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 zstyle ':completion:*:*:kill:*' menu yes select
 zstyle ':completion:*:*:kill:*' force-list always
 zstyle ':completion:*:*:kill:*' insert-ids single
-
 
 # SSH/SCP/RSYNC
 zstyle ':completion:*:(ssh|scp|rsync):*' tag-order 'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
@@ -165,7 +144,6 @@ zstyle ':completion:*:(scp|rsync):*' group-order users files all-files hosts-hos
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-host' ignored-patterns '*(.|:)*' loopback ip6-loopback localhost ip6-localhost broadcasthost
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-domain' ignored-patterns '<->.<->.<->.<->' '^[-[:alnum:]]##(.[-[:alnum:]]##)##' '*@*'
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<->.<->.<->|(|::)([[:xdigit:].]##:(#c,2))##(|%*))' '127.0.0.<->' '255.255.255.255' '::1' 'fe80::*'
-
 
 # automatically load bash completion functions
 autoload -U +X bashcompinit && bashcompinit

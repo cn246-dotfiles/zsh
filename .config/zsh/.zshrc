@@ -1,45 +1,7 @@
-# If ZDOTDIR is not defined, use the current script's directory.
-[[ -z "$ZDOTDIR" ]] && export ZDOTDIR="${${(%):-%x}:a:h}"
-
-
-###################
-# Cache
-###################
-# Set ZSH_CACHE_DIR to the path where cache files should be created
-if [[ -z "$ZSH_CACHE_DIR" ]]; then
-  ZSH_CACHE_DIR="$ZDOTDIR/cache"
-fi
-
-# Make sure $ZSH_CACHE_DIR is writable, otherwise use a directory in $HOME
-if [[ ! -w "$ZSH_CACHE_DIR" ]]; then
-  ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
-fi
-
-# Figure out the SHORT hostname
-if [[ "$OSTYPE" = darwin* ]]; then
-  # macOS's $HOST changes with dhcp, etc. Use ComputerName if possible.
-  SHORT_HOST=$(scutil --get ComputerName 2>/dev/null) || SHORT_HOST="${HOST/.*/}"
-else
-  SHORT_HOST="${HOST/.*/}"
-fi
-
-if [[ -z "$ZCOMPDUMP" ]]; then
-  ZCOMPDUMP="$ZSH_CACHE_DIR/.zcompdump-${SHORT_HOST}"
-fi
-
-# Create cache and completions dir and add to $fpath
-mkdir -p "$ZSH_CACHE_DIR/completions"
-(( ${fpath[(Ie)"$ZSH_CACHE_DIR/completions"]} )) || fpath=("$ZSH_CACHE_DIR/completions" $fpath)
-
-fpath=("$ZDOTDIR/functions" "$ZDOTDIR/completions" $fpath)
-
 # Load all stock functions (from $fpath files) called below.
-autoload -U compaudit compinit zrecompile
+autoload -U compaudit compinit zmv zrecompile
 
-
-###################
 # Plugins
-###################
 plugins=(gpg-agent vi-mode)
 
 is_plugin() {
@@ -51,30 +13,27 @@ is_plugin() {
 
 for plugin ($plugins); do
   if is_plugin "$ZDOTDIR" "$plugin"; then
-    fpath=("$ZDOTDIR/plugins/$plugin" $fpath)
+    (( ${fpath[(Ie)"$ZDOTDIR/plugins/$plugin"]} )) \
+      || fpath=("$ZDOTDIR/plugins/$plugin" $fpath)
+    source "$ZDOTDIR/plugins/$plugin/$plugin.plugin.zsh"
   else
     echo "Plugin '$plugin' not found"
   fi
 done
 
+unset plugin
 
-###################
-# Load config files
-###################
+# Config files
 for config_file ("$ZDOTDIR"/lib/*.zsh); do
   source "$config_file"
 done
 
-
-###################
-# Load plugins
-###################
-for plugin ($plugins); do
-  if [[ -f "$ZDOTDIR/plugins/$plugin/$plugin.plugin.zsh" ]]; then
-    source "$ZDOTDIR/plugins/$plugin/$plugin.plugin.zsh"
-  fi
-done
-unset plugin
+# Functions
+if [ -d "$ZDOTDIR"/functions ]; then
+  for file ("$ZDOTDIR"/functions/*); do
+    autoload -U "$file"
+  done
+fi
 
 # Input/Output
 setopt interactive_comments
@@ -94,20 +53,7 @@ setopt combining_chars
 autoload -Uz bracketed-paste-magic
 zle -N bracketed-paste bracketed-paste-magic
 
-
-###################
-# Functions
-###################
-if [ -d "$ZDOTDIR"/functions ]; then
-  for file ("$ZDOTDIR"/functions/*); do
-    autoload -U "$file"
-  done
-fi
-
-
-###################
 # Prompt
-###################
 setopt prompt_subst
 
 if [ -d "$ZDOTDIR"/prompts ]; then
@@ -120,10 +66,7 @@ fi
 autoload -U promptinit && promptinit
 prompt chaz
 
-
-###################
 # Extras
-###################
 umask 077
 
 # vim: ft=zsh ts=2 sts=2 sw=2 sr et

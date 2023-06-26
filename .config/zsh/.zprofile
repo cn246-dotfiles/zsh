@@ -10,9 +10,16 @@ path=(
 )
 export PATH
 
+if [[ ! -d "$ZSH_CACHE_DIR/completions" ]]; then
+  mkdir -p "$ZSH_CACHE_DIR/completions"
+fi
+
 typeset -U fpath
 fpath=(
     "$(brew --prefix)/share/zsh/site-functions"
+    "$ZDOTDIR/functions"
+    "$ZDOTDIR/completions"
+    "$ZSH_CACHE_DIR/completions"
     $fpath
 )
 export FPATH
