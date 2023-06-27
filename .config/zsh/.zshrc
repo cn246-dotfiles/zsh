@@ -1,5 +1,5 @@
 # Load all stock functions (from $fpath files) called below.
-autoload -U compaudit compinit zmv zrecompile
+autoload -U compaudit zmv zrecompile
 
 # Plugins
 plugins=(gpg-agent vi-mode)
