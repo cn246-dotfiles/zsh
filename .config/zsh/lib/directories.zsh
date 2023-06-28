@@ -32,10 +32,10 @@ function d () {
 compdef _dirs d
 
 alias cp='cp -i'
-alias la='ls -lAh'
-alias ll='ls -alF'
-alias ls='ls -hG'
-alias lsa='ls -lah'
+alias ls='gls -h --group-directories-first --color=auto'
+alias la='ls -Ahl'
+alias ll='ls -Fal'
+alias lsa='ls -ahl'
 alias mkdir='mkdir -p'
 alias mv='mv -i'
 alias rm='rm -i'
