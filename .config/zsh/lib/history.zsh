@@ -1,3 +1,10 @@
+export HIST_STAMPS="mm/dd/yyyy"
+export HISTFILE="$ZDOTDIR/log/zsh_history"
+HISTSIZE=50000
+SAVEHIST=10000
+
+alias history='zsh_history -i'
+
 ## History wrapper
 function zsh_history {
   local clear list
@@ -16,20 +23,6 @@ function zsh_history {
     [[ ${@[-1]-} = *[0-9]* ]] && builtin fc -l "$@" || builtin fc -l "$@" 1
   fi
 }
-
-# Timestamp format
-case ${HIST_STAMPS-} in
-  "mm/dd/yyyy") alias history='zsh_history -f' ;;
-  "dd.mm.yyyy") alias history='zsh_history -E' ;;
-  "yyyy-mm-dd") alias history='zsh_history -i' ;;
-  "") alias history='zsh_history' ;;
-  *) alias history="zsh_history -t '$HIST_STAMPS'" ;;
-esac
-
-## History file configuration
-[ -z "$HISTFILE" ] && HISTFILE="$ZDOTDIR/.zsh_history"
-[ "$HISTSIZE" -lt 50000 ] && HISTSIZE=50000
-[ "$SAVEHIST" -lt 10000 ] && SAVEHIST=10000
 
 ## History command configuration
 setopt extended_history       # record timestamp of command in HISTFILE

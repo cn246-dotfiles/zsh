@@ -8,8 +8,6 @@ fi
 export ZDOTDIR="$HOME/.config/zsh"
 export ZSH_CACHE_DIR="$ZDOTDIR/cache"
 export ZCOMPDUMP="$ZSH_CACHE_DIR/.zcompdump-${SHORT_HOST}"
-export HIST_STAMPS="mm/dd/yyyy"
-export HISTFILE="$ZDOTDIR/log/zsh_history"
 
 # EDITOR
 export EDITOR=vim
