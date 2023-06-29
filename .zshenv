@@ -8,6 +8,7 @@ fi
 export ZDOTDIR="$HOME/.config/zsh"
 export ZSH_CACHE_DIR="$ZDOTDIR/cache"
 export ZCOMPDUMP="$ZSH_CACHE_DIR/.zcompdump-${SHORT_HOST}"
+export SHELL_SESSIONS_DISABLE=1
 
 # EDITOR
 export EDITOR=vim
