@@ -23,7 +23,7 @@ setopt auto_list
 setopt complete_in_word
 #setopt always_to_end
 
-autoload -Uz compinit && compinit
+autoload -Uz compinit
 # #q expands globs in conditional expressions
 if [[ $ZCOMPDUMP(#qNmh-20) ]]; then
   # -C (skip function check) implies -i (skip security check).
