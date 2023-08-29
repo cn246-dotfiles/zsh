@@ -15,6 +15,13 @@ export EDITOR=vim
 export VISUAL=$EDITOR
 export SUDO_EDITOR=$EDITOR
 
+# FZF
+if [[ -d "$HOME/.local/src/fzf" ]]; then
+  export FZF_BASE="$HOME/.local/src/fzf/"
+  export DISABLE_FZF_AUTO_COMPLETION="false"
+  export DISABLE_FZF_KEY_BINDINGS="false"
+fi
+
 # LESS
 export PAGER=less
 export LESS='--mouse -F -i -R -Q -J -M -W -X -x4 -z-4'
