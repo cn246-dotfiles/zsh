@@ -2,7 +2,7 @@
 autoload -U compaudit zmv zrecompile
 
 # Plugins
-plugins=(gpg-agent vi-mode)
+plugins=(fzf gpg-agent vi-mode)
 
 is_plugin() {
   local base_dir=$1
@@ -17,7 +17,7 @@ for plugin ($plugins); do
       || fpath=("$ZDOTDIR/plugins/$plugin" $fpath)
     source "$ZDOTDIR/plugins/$plugin/$plugin.plugin.zsh"
   else
-    echo "Plugin '$plugin' not found"
+    printf '%s\n' "Plugin '$plugin' not found"
   fi
 done
 
