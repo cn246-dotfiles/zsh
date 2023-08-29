@@ -1,21 +1,18 @@
-option="$1"
-
+local venv_base_dir
 venv_base_dir="$HOME/.local/lib/venv"
 
-case "${option}" in
-  '' | ansible)
-    venv_path="${venv_base_dir}/ansible"
-    ;;
-  aws)
-    venv_path="${venv_base_dir}/aws"
-    ;;
-  *)
-    printf '%s\n' "Sorry, a venv has not been configured for that argument."
-    printf '%s\n' "Available venvs in ${venv_base_dir}:"
-    find ${venv_base_dir} -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | nl
-    return 1
-    ;;
-esac
+local selected_env
+selected_env=$(ls "${venv_base_dir}" | fzf --height=50% \
+                                           --margin=5%,2%,2%,5% \
+                                           --border=sharp \
+                                           --border-label='Select Venv to Activate' \
+                                           --header='CTRL-c or ESC to quit')
+
+if [[ -n "${selected_env}" ]]; then
+  venv_path="${venv_base_dir}/${selected_env}"
+else
+  return 0
+fi
 
 if [ -d "${venv_path}" ]; then
   source "${venv_path}/bin/activate"
@@ -32,11 +29,7 @@ if [ -d "${venv_path}" ]; then
     eval $(register-python-argcomplete ansible-vault)
   fi
 
-  unset venv_path
-else
-  printf '%s\n' "Could not find a venv at the specified location (${venv_path})."
-  unset venv_path
-  return 1
+  unset selected_env venv_path
 fi
 
 # vim: ft=zsh ts=2 sts=2 sw=2 sr et
