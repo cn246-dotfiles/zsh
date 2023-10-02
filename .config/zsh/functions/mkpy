@@ -3,16 +3,17 @@ if ! [ -z "$filename" ]; then
   if ! [ -r "$filename" ]; then
     cat << EOF > "$filename"
 #!/usr/bin/env python3
-
-# Description:
-# Author: Chuck Nemeth
+"""
+Description: file
+Author: Chuck Nemeth
+"""
 
 
 
 # vim: ft=python ts=4 sts=4 sw=4 sr et
 EOF
-    #vim +6 -c 'startinsert' "$filename"
-    vim +6 "$filename"
+    #vim +7 -c 'startinsert' "$filename"
+    vim +7 "$filename"
   else
     mkuhoh "$filename"
   fi
