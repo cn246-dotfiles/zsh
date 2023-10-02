@@ -42,4 +42,9 @@ if ! [[ ( -v SSH_CONNECTION || -v SSH_TTY ) ]]; then
   fi
 fi
 
+# YAMLFIX
+if [[ -f "$HOME/.config/yamlfix/yamlfix" ]]; then
+  source "$HOME/.config/yamlfix/yamlfix"
+fi
+
 # vim: ft=zsh ts=2 sts=2 sw=2 sr et
