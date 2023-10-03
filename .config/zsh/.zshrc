@@ -2,7 +2,7 @@
 autoload -U compaudit zmv zrecompile
 
 # Plugins
-plugins=(fzf gpg-agent vi-mode)
+plugins=(gpg-agent vi-mode fzf)
 
 is_plugin() {
   local base_dir=$1
