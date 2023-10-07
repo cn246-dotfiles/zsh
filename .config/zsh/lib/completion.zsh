@@ -16,7 +16,8 @@ bindkey -M menuselect '^xu' undo                           # Undo
 
 # Options
 _comp_options+=(globdots)
-setopt menu_complete
+unsetopt menu_complete
+setopt automenu
 #setopt noautomenu
 #setopt nomenucomplete
 setopt auto_list
