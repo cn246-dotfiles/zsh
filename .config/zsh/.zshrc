@@ -66,6 +66,12 @@ fi
 autoload -U promptinit && promptinit
 prompt chaz
 
+# Set venv prompt when using vim terminal
+if [ -v VIMRUNTIME ] && [ -v VIRTUAL_ENV ]; then
+  PS1="${VIRTUAL_ENV_PROMPT}${PS1:-}"
+  export PS1
+fi
+
 # Extras
 umask 077
 
