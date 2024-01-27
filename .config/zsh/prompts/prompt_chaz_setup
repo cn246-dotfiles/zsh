@@ -37,12 +37,13 @@ prompt_chaz_setup() {
   autoload -Uz vcs_info
 
   zstyle ':vcs_info:*' enable git
-  #zstyle ':vcs_info:*' debug true
+  # zstyle ':vcs_info:*' debug true
 
-  zstyle ':vcs_info:*' check-for-changes true
+  # reason for the duplicate?
+  # zstyle ':vcs_info:*' check-for-changes true
 
   # Configure vcs_info
-  #zstyle ':vcs_info:git:*' use-simple true
+  # zstyle ':vcs_info:git:*' use-simple true
   zstyle ':vcs_info:*' check-for-changes true
   zstyle ':vcs_info:git*+set-message:*' hooks git-untracked git-st
   zstyle ':vcs_info:*' stagedstr '+'
@@ -50,16 +51,19 @@ prompt_chaz_setup() {
   zstyle ':vcs_info:git:*' formats '(%b%u%c%m)'
   zstyle ':vcs_info:git:*' actionformats '(%b|%a%u%c%m)'
 
+  # Define variables
   local -a pcc
   local -A pc
   local p_cwd p_end p_host p_prefix p_suffix p_user p_vcs
 
+  # Define colors
   pcc[1]=${1:-'white'}
   pcc[2]=${2:-${${SSH_CLIENT+'yellow'}:-'blue'}}
   pcc[3]=${3:-'green'}
   pcc[4]=${4:-'yellow'}
   pcc[5]=${5:-'red'}
 
+  # Colored brackets 1: [], 2: <>, 3: ()
   pc['1o']="%F{$pcc[1]}[%f"
   pc['1c']="%F{$pcc[1]}]%f"
   pc['2o']="%F{$pcc[1]}<%f"
@@ -67,8 +71,8 @@ prompt_chaz_setup() {
   pc['3o']="%F{$pcc[1]}(%f"
   pc['3c']="%F{$pcc[1]}%)%f"
 
+  # Colored prompt items
   p_prefix="$pc['1o']"
-  p_user="%F{$pcc[2]}%n%f"
   p_host="%F{$pcc[2]}%m%f"
   p_cwd="%F{$pcc[3]}%1~%f"
   p_suffix="$pc['1c']"
@@ -76,23 +80,34 @@ prompt_chaz_setup() {
   p_end='%(!.#.$) '
   p_exit="%F{$pcc[5]}%?%f"
 
+  # Always use red for root sessions, even in ssh
+  if [[ $UID = 0 ]]; then
+    p_user="%F{$pcc[5]}%n%f"
+  else
+    p_user="%F{$pcc[2]}%n%f"
+  fi
+
+  # Connected via ssh?
   if [[ -n "$SSH_CONNECTION" ]]; then
     remote_ip='$(echo $SSH_CONNECTION | cut -d" " -f1)'
-  elif [[ -r /etc/debian_chroot ]]; then
+  fi
+
+  # Debian chroot?
+  if [[ -r /etc/debian_chroot ]]; then
     chroot='$(cat /etc/debian_chroot | cut -d" " -f1)'
     p_prefix="$pc['3o']$chroot$pc['3c']$pc['1o']"
-  elif [[ -r /.dockerenv ]]; then
+  fi
+
+  # Running Docker?
+  if [[ -r /.dockerenv ]]; then
     docker="docker"
     p_prefix="$pc['3o']$docker$pc['3c']$pc['1o']"
   fi
 
-  if [[ $UID = 0 ]]; then
-    # always use red for root sessions, even in ssh
-    p_user="%F{$pcc[5]}%n%f"
-  fi
-
+  # Build the main prompt
   prompt=$p_prefix$p_user@$p_host:$p_cwd$p_suffix$p_vcs$p_end
 
+  # Build the right prompt
   if [[ -n "$remote_ip" ]]; then
     RPROMPT="$pc['3o']$remote_ip$pc['3c'] $p_prefix$p_exit$p_suffix"
   else
