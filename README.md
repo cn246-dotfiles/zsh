@@ -34,7 +34,7 @@ cd ~/.dotfiles
 ```
 - Clone repo:
 ```bash
-git clone git@gitlab.com:dotfiles1/dotfiles-zsh.git zsh
+git clone git@github.com:cn246-dotfiles/dotfiles-zsh.git zsh
 ```
 - Delete existing dotfiles (might want to back them up instead):
 ```bash
@@ -44,7 +44,7 @@ for file in "$HOME/${files[@]}"; do rm -f "$file" done
 ```
 - Stow:
 ```bash
-stow zsh
+stow --no-folding zsh
 ```
 
 ----
