@@ -28,15 +28,22 @@ export LESS='--mouse -F -i -R -Q -J -M -W -X -x4 -z-4'
 export LESSOPEN="|$HOME/.local/bin/lesspipe.sh %s"
 
 # PYTHON
+# https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH
+# https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUSERBASE
 export PYTHONPATH="$HOME/Projects/python/modules"
 export PYTHONUSERBASE="$HOME/.local"
 
-if [[ -n $VIRTUAL_ENV && -e "${VIRTUAL_ENV}/bin/activate" ]]; then
-  source "${VIRTUAL_ENV}/bin/activate"
-fi
+# RIPGREP
+export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/ripgreprc"
+
+# Make sure virtualenv is accesible from Vim: https://vi.stackexchange.com/a/7654
+# NOTE: seems to work without this -- is it b/c of the ale option?
+# if [ -v VIRTUAL_ENV ] && [ -e "${VIRTUAL_ENV}/bin/activate" ]; then
+#   source "${VIRTUAL_ENV}/bin/activate"
+# fi
 
 # SSH Keys
-if ! [[ ( -v SSH_CONNECTION || -v SSH_TTY ) ]]; then
+if ! [ -v SSH_CONNECTION ] || ! [ -v SSH_TTY ]; then
   if ! ssh-add -q -L >/dev/null; then
     ssh-add --apple-load-keychain
   fi
