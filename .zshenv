@@ -36,18 +36,19 @@ export PYTHONUSERBASE="$HOME/.local"
 # RIPGREP
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/ripgreprc"
 
-# Make sure virtualenv is accesible from Vim: https://vi.stackexchange.com/a/7654
-# NOTE: seems to work without this -- is it b/c of the ale option?
-# if [ -v VIRTUAL_ENV ] && [ -e "${VIRTUAL_ENV}/bin/activate" ]; then
-#   source "${VIRTUAL_ENV}/bin/activate"
-# fi
-
 # SSH Keys
 if ! [ -v SSH_CONNECTION ] || ! [ -v SSH_TTY ]; then
   if ! ssh-add -q -L >/dev/null; then
     ssh-add --apple-load-keychain
   fi
 fi
+
+# VIM
+# Make sure virtualenv is accesible from Vim: https://vi.stackexchange.com/a/7654
+# NOTE: seems to work without this -- is it b/c of the ale option?
+# if [ -v VIRTUAL_ENV ] && [ -e "${VIRTUAL_ENV}/bin/activate" ]; then
+#   source "${VIRTUAL_ENV}/bin/activate"
+# fi
 
 # YAMLFIX
 if [[ -f "$HOME/.config/yamlfix/yamlfix" ]]; then
