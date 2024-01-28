@@ -14,6 +14,7 @@ export SHELL_SESSIONS_DISABLE=1
 export EDITOR=vim
 export VISUAL=$EDITOR
 export SUDO_EDITOR=$EDITOR
+export GIT_EDITOR="vim +19 -c'startinsert'"
 
 # FZF
 if [[ -d "$HOME/.local/src/fzf" ]]; then
