@@ -39,7 +39,12 @@ fi
 
 # Activate the venv
 if [ -d "${venv_path}" ]; then
-  source "${venv_path}/bin/activate"
+  if [ -e "${venv_path}/bin/python3" ]; then
+    source "${venv_path}/bin/activate"
+  else
+    printf '%s\n' "[ERROR] Please use mkvenv script to update the python3 symlinks"
+    return 1
+  fi
 
   if [ ${venv_path} = "${venv_base_dir}/ansible" ]; then
     eval $(register-python-argcomplete ansible)
