@@ -149,7 +149,19 @@ zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<-
 # automatically load bash completion functions
 autoload -U +X bashcompinit && bashcompinit
 
+# Load terraform completions
+if command -v terraform >/dev/null 2>&1; then
+  complete -o nospace -C /opt/homebrew/bin/terraform terraform
+fi
+
+# Load terragrunt completions
+if command -v terragrunt >/dev/null 2>&1; then
+  complete -o nospace -C "$HOME/.local/bin/terragrunt" terragrunt
+fi
+
 # Load awscli completions
-if command -v aws_completer &> /dev/null; then
+if command -v aws_completer >/dev/null 2>&1; then
   complete -C aws_completer aws
 fi
+
+# vim: ft=zsh ts=2 sts=2 sw=2 nosr et
