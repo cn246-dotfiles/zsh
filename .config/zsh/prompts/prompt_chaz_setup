@@ -108,11 +108,11 @@ prompt_chaz_setup() {
   prompt=$p_prefix$p_user@$p_host:$p_cwd$p_suffix$p_vcs$p_end
 
   # Build the right prompt
-  if [[ -n "$remote_ip" ]]; then
-    RPROMPT="$pc['3o']$remote_ip$pc['3c'] $p_prefix$p_exit$p_suffix"
-  else
-    RPROMPT="$p_prefix$p_exit$p_suffix"
-  fi
+  # if [[ -n "$remote_ip" ]]; then
+  #   RPROMPT="$pc['3o']$remote_ip$pc['3c'] $p_prefix$p_exit$p_suffix"
+  # else
+  #   RPROMPT="$p_prefix$p_exit$p_suffix"
+  # fi
 
   add-zsh-hook precmd prompt_chaz_precmd
 }
