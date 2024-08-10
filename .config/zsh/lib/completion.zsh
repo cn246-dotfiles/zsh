@@ -56,6 +56,7 @@ unset CASE_SENSITIVE
 
 # Group matches and describe
 zstyle ':completion:*:*:*:*:*' menu select interactive
+zstyle ':completion:*:descriptions' format 'Completing %d'
 zstyle ':completion:*:matches' group 'yes'
 zstyle ':completion:*:options' description 'yes'
 zstyle ':completion:*:options' auto-description '%d'
@@ -107,10 +108,13 @@ zstyle ':completion:*:rm:*' file-patterns '*:all-files'
 zstyle ':completion:*:*:-command-:*:*' group-order aliases builtins functions commands
 zstyle ':completion:*' keep-prefix true
 
+# Create array of Included files in ~/.ssh/config
+includes=(${=${${${${(@M)${(f)"$(<~/.ssh/config 2>/dev/null)"}:#Include *}#Include }:#*\**}:#*\?*}})
+
 zstyle -e ':completion:*:hosts' hosts 'reply=(
-  ${=${${${${(@M)${(f)"$(cat ~/.ssh/config 2> /dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
-  ${=${${${${(@M)${(f)"$(cat ~/.ssh/config.d/*.config 2> /dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
-  ${=${=${=${${(f)"$(cat {/etc/ssh/ssh_,~/.ssh/}known_hosts(|2)(N) 2> /dev/null)"}%%[#| ]*}//\]:[0-9]*/ }//,/ }//\[/ }
+  ${=${${${${(@M)${(f)"$(<~/.ssh/config 2>/dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
+  ${=${${${${(@M)${(f)"$(<~/.ssh/${^includes} 2>/dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
+  ${=${=${=${${(f)"$(<{/etc/ssh/ssh_,~/.ssh/}known_hosts(|2)(N) 2>/dev/null)"}%%[#| ]*}//\]:[0-9]*/ }//,/ }//\[/ }
 )'
 
 # Don't complete uninteresting users
@@ -149,19 +153,19 @@ zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<-
 # automatically load bash completion functions
 autoload -U +X bashcompinit && bashcompinit
 
+# Load awscli completions
+if command -v aws_completer >/dev/null 2>&1; then
+  complete -C aws_completer aws
+fi
+
 # Load terraform completions
 if command -v terraform >/dev/null 2>&1; then
-  complete -o nospace -C /opt/homebrew/bin/terraform terraform
+  complete -o nospace -C terraform terraform
 fi
 
 # Load terragrunt completions
 if command -v terragrunt >/dev/null 2>&1; then
-  complete -o nospace -C "$HOME/.local/bin/terragrunt" terragrunt
-fi
-
-# Load awscli completions
-if command -v aws_completer >/dev/null 2>&1; then
-  complete -C aws_completer aws
+  complete -o nospace -C terragrunt terragrunt
 fi
 
 # vim: ft=zsh ts=2 sts=2 sw=2 nosr et
