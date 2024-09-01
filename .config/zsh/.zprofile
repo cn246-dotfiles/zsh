@@ -1,32 +1,41 @@
-eval "$(/opt/homebrew/bin/brew shellenv)"
-export HOMEBREW_NO_ANALYTICS=1
+brew_binary=''
+[ -x "/opt/homebrew/bin/brew" ] && brew_binary="/opt/homebrew/bin/brew"
+[ -x "$HOME/.local/homebrew/bin/brew" ] && brew_binary="$HOME/.local/homebrew/bin/brew"
 
-typeset -U path
-path=(
-  "$HOMEBREW_PREFIX/bin"
-  "$HOMEBREW_PREFIX/sbin"
-  "$HOME/.local/bin"
-  $path
-)
-export PATH
+if [ -n "${brew_binary}" ]; then
+  eval "$(${brew_binary} shellenv)"
+  export HOMEBREW_NO_ANALYTICS=1
 
-typeset -U fpath
-fpath=(
-    "$HOMEBREW_PREFIX/share/zsh/site-functions"
-    "$ZDOTDIR/functions"
-    "$ZDOTDIR/completions"
-    $fpath
-)
-export FPATH
+  typeset -U path
+  path=(
+    "$HOME/.local/bin"
+    "$HOMEBREW_PREFIX/bin"
+    "$HOMEBREW_PREFIX/sbin"
+    $path
+  )
 
-#typeset -gxU manpath MANPATH
-#manpath=(
-#    $manpath "$HOMEBREW_PREFIX/share/man"
-#)
-#manpath=($^manpath(N-/))
+  typeset -U fpath
+  fpath=(
+      "$ZDOTDIR/functions"
+      "$ZDOTDIR/completions"
+      "$HOMEBREW_PREFIX/share/zsh/site-functions"
+      $fpath
+  )
+else
+  typeset -U path
+  path=(
+    "$HOME/.local/bin"
+    $path
+  )
 
-#typeset -gxU infopath INFOPATH
-#infopath=($infopath "$HOMEBREW_PREFIX/share/info")
-#infopath=($^infopath(N-/))
+  typeset -U fpath
+  fpath=(
+      "$ZDOTDIR/functions"
+      "$ZDOTDIR/completions"
+      $fpath
+  )
+fi
+
+export FPATH PATH
 
 # vim: ft=zsh ts=2 sts=2 sw=2 sr et
