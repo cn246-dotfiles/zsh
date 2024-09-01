@@ -110,12 +110,13 @@ zstyle ':completion:*' keep-prefix true
 
 # Create array of Included files in ~/.ssh/config
 includes=(${=${${${${(@M)${(f)"$(<~/.ssh/config 2>/dev/null)"}:#Include *}#Include }:#*\**}:#*\?*}})
-
-zstyle -e ':completion:*:hosts' hosts 'reply=(
+all_hosts=(
   ${=${${${${(@M)${(f)"$(<~/.ssh/config 2>/dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
   ${=${${${${(@M)${(f)"$(<~/.ssh/${^includes} 2>/dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
   ${=${=${=${${(f)"$(<{/etc/ssh/ssh_,~/.ssh/}known_hosts(|2)(N) 2>/dev/null)"}%%[#| ]*}//\]:[0-9]*/ }//,/ }//\[/ }
-)'
+)
+
+zstyle -e ':completion:*:hosts' hosts 'reply=(${all_hosts[@]})'
 
 # Don't complete uninteresting users
 zstyle ':completion:*:*:*:users' ignored-patterns \
