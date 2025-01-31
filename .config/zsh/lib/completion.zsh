@@ -1,7 +1,5 @@
 zmodload -i zsh/complist
 
-LS_COLORS=${LS_COLORS:-'no=00:fi=00:di=01;34:ln=36:su=01;04;37:sg=01;04;37:bd=01;33:pi=04;01;36:so=04;33:cd=33:or=31:mi=01;37;41:ex=01;36:su=01;04;37:sg=01;04;37:'}
-
 # Use hjlk in menu selection (during completion)
 bindkey -M menuselect 'h' vi-backward-char
 bindkey -M menuselect 'k' vi-up-line-or-history
@@ -25,15 +23,13 @@ setopt complete_in_word
 #setopt always_to_end
 
 autoload -Uz compinit
+compinit -C -d "$ZCOMPDUMP"
+
+source <(fzf --zsh)
+
 # #q expands globs in conditional expressions
-if [[ $ZCOMPDUMP(#qNmh-20) ]]; then
-  # -C (skip function check) implies -i (skip security check).
-  compinit -C -d "$ZCOMPDUMP"
-else
-  mkdir -p "$ZCOMPDUMP:h"
-  compinit -i -d "$ZCOMPDUMP"
-  # Keep $_comp_path younger than cache time even if it isn't regenerated.
-  touch "$ZCOMPDUMP"
+if [[ -s "$ZCOMPDUMP" && (! -s "${ZCOMPDUMP}.zwc" || "$ZCOMPDUMP" -nt "${ZCOMPDUMP}.zwc") ]]; then
+  zcompile "$ZCOMPDUMP"
 fi
 
 # Defaults

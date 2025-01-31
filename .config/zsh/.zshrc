@@ -1,8 +1,9 @@
+# zmodload zsh/zprof
 # Load all stock functions (from $fpath files) called below.
 autoload -U compaudit zmv zrecompile
 
 # Plugins
-plugins=(gpg-agent vi-mode fzf)
+plugins=(gpg-agent vi-mode)
 
 is_plugin() {
   local base_dir=$1
@@ -28,7 +29,7 @@ for config_file ("$ZDOTDIR"/lib/*.zsh); do
   source "$config_file"
 done
 
-# Functions
+# # Functions
 if [ -d "$ZDOTDIR"/functions ]; then
   for file ("$ZDOTDIR"/functions/*); do
     autoload -U "$file"
@@ -58,13 +59,14 @@ setopt prompt_subst
 
 if [ -d "$ZDOTDIR"/prompts ]; then
   fpath=("$ZDOTDIR"/prompts $fpath)
-  for file ("$ZDOTDIR"/prompts/*); do
-    autoload -U "$file"
-  done
+  source "$ZDOTDIR/prompts/prompt_chaz_setup"
+  # for file ("$ZDOTDIR"/prompts/*); do
+  #   autoload -U "$file"
+  # done
 fi
 
-autoload -U promptinit && promptinit
-prompt chaz
+# autoload -U promptinit && promptinit
+# prompt chaz
 
 # Set venv prompt when using vim terminal
 if [ -v VIMRUNTIME ] && [ -v VIRTUAL_ENV ]; then
@@ -75,4 +77,5 @@ fi
 # Extras
 umask 077
 
+# zprof
 # vim: ft=zsh ts=2 sts=2 sw=2 sr et
