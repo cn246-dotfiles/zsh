@@ -19,6 +19,7 @@ export LESSOPEN="|$HOME/.local/bin/lesspipe.sh %s"
 # https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUSERBASE
 export PYTHONPATH="$HOME/Projects/python/modules"
 export PYTHONUSERBASE="$HOME/.local"
+export UV_NO_MODIFY_PATH=1
 
 # RIPGREP
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/ripgreprc"
