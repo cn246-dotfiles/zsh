@@ -22,14 +22,17 @@ setopt auto_list
 setopt complete_in_word
 #setopt always_to_end
 
+# Load compinit
 autoload -Uz compinit
-compinit -C -d "$ZCOMPDUMP"
 
+# Load fzf completions
 source <(fzf --zsh)
 
-# #q expands globs in conditional expressions
-if [[ -s "$ZCOMPDUMP" && (! -s "${ZCOMPDUMP}.zwc" || "$ZCOMPDUMP" -nt "${ZCOMPDUMP}.zwc") ]]; then
+if [[ -n "$ZCOMPDUMP"(#qN.mh+24) && (! -s "$ZCOMPDUMP.zwc" || "$ZCOMPDUMP" -nt "$ZCOMPDUMP.zwc") ]]; then
+  compinit -d "$ZCOMPDUMP"
   zcompile "$ZCOMPDUMP"
+else
+  compinit -C -d "$ZCOMPDUMP"
 fi
 
 # Defaults
