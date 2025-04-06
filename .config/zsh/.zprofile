@@ -7,7 +7,7 @@ if [[ -d "$HOME/.local/src/fzf" ]]; then
 
   # Default options
   FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git/*"'
-  FZF_DEFAULT_OPTS="--height=40% --layout=reverse --info=inline --border --margin=1 --padding=1 --tmux=80%"
+  FZF_DEFAULT_OPTS="--height=40% --layout=reverse --info=inline --border --margin=1 --padding=1 --tmux=bottom,80%,40%"
   FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} --bind alt-j:page-down,alt-k:page-up"
   FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS},ctrl-alt-k:preview-up,ctrl-alt-j:preview-down"
   FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS},ctrl-alt-u:preview-half-page-up,ctrl-alt-d:preview-half-page-down"
