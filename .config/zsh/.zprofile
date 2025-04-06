@@ -19,7 +19,7 @@ if [[ -d "$HOME/.local/src/fzf" ]]; then
   FZF_ALT_C_OPTS="--preview 'tree -C {} 2> /dev/null | head -200'"
 
   # History options
-  FZF_CTRL_R_OPTS="--no-sort --padding=0,1,1 --color header:italic"
+  FZF_CTRL_R_OPTS="--no-sort --padding=0,1,1 --color header:italic --exact"
   FZF_CTRL_R_OPTS="${FZF_CTRL_R_OPTS} --header-first --header-border=double"
   FZF_CTRL_R_OPTS="${FZF_CTRL_R_OPTS} --header 'Press ? to toggle preview\nPress CTRL+Y to copy command into clipboard'"
   FZF_CTRL_R_OPTS="${FZF_CTRL_R_OPTS} --preview 'echo {}' --preview-window down:20%:hidden:wrap"
