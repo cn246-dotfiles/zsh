@@ -155,17 +155,17 @@ autoload -U +X bashcompinit && bashcompinit
 
 # Load awscli completions
 if command -v aws_completer >/dev/null 2>&1; then
-  complete -C aws_completer aws
+  complete -C aws_completer aws awslocal
 fi
 
 # Load terraform completions
 if command -v terraform >/dev/null 2>&1; then
-  complete -o nospace -C terraform terraform
+  complete -o nospace -C terraform tf
 fi
 
 # Load terragrunt completions
 if command -v terragrunt >/dev/null 2>&1; then
-  complete -o nospace -C terragrunt terragrunt
+  complete -o nospace -C terragrunt tg
 fi
 
 # vim: ft=zsh ts=2 sts=2 sw=2 nosr et
