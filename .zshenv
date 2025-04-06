@@ -24,6 +24,11 @@ export UV_NO_MODIFY_PATH=1
 # RIPGREP
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/ripgreprc"
 
+# RUST
+if [[ -f "$HOME/.cargo/env" ]]; then
+  . "$HOME/.cargo/env"
+fi
+
 # YAMLFIX
 if [[ -f "$HOME/.config/yamlfix/yamlfix" ]]; then
   source "$HOME/.config/yamlfix/yamlfix"
