@@ -77,5 +77,7 @@ fi
 # Extras
 umask 077
 
+eval "$($HOME/.local/bin/mise activate zsh)"
+
 # zprof
 # vim: ft=zsh ts=2 sts=2 sw=2 sr et

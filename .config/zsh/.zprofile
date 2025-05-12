@@ -84,6 +84,9 @@ export FPATH PATH
 # LS
 LS_COLORS=${LS_COLORS:-'no=00:fi=00:di=01;34:ln=36:su=01;04;37:sg=01;04;37:bd=01;33:pi=04;01;36:so=04;33:cd=33:or=31:mi=01;37;41:ex=01;36:su=01;04;37:sg=01;04;37:'}
 
+# MISE
+# eval "$(mise activate zsh --shims)"
+
 # ORBSTACK
 [[ -x "$HOME/.orbstack/shell/init.zsh" ]] && source "$HOME/.orbstack/shell/init.zsh" 2>/dev/null
 
