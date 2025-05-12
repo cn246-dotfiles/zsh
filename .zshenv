@@ -17,17 +17,12 @@ export LESSOPEN="|$HOME/.local/bin/lesspipe.sh %s"
 # PYTHON
 # https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH
 # https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUSERBASE
-export PYTHONPATH="$HOME/Projects/python/modules"
+export PYTHONPATH="$HOME/Projects/programming/python/modules"
 export PYTHONUSERBASE="$HOME/.local"
 export UV_NO_MODIFY_PATH=1
 
 # RIPGREP
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/ripgreprc"
-
-# RUST
-if [[ -f "$HOME/.cargo/env" ]]; then
-  . "$HOME/.cargo/env"
-fi
 
 # YAMLFIX
 if [[ -f "$HOME/.config/yamlfix/yamlfix" ]]; then
