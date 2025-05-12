@@ -160,7 +160,7 @@ fi
 
 # Load terraform completions
 if command -v terraform >/dev/null 2>&1; then
-  complete -o nospace -C terraform tf
+  complete -o nospace -C terraform terraform tf
 fi
 
 # Load terragrunt completions
