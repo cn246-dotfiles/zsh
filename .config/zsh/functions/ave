@@ -1,12 +1,6 @@
-venv_name="ansible"
-venv_base_dir="$HOME/.local/lib/venv"
-venv_path="${venv_base_dir}/${venv_name}"
+. "$HOME/.local/lib/shell/ansible_check"
 
-if [ "$VIRTUAL_ENV" = "${venv_path}" ]; then
-  ansible-vault edit "${@}"
-else
-  # shellcheck source=/dev/null
-  . "${venv_path}/bin/activate"
+if ansible_vault_exists; then
   ansible-vault edit "${@}"
 fi
 
