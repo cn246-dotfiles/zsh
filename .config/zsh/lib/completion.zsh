@@ -150,6 +150,19 @@ zstyle ':completion:*:(ssh|scp|rsync):*:hosts-host' ignored-patterns '*(.|:)*' l
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-domain' ignored-patterns '<->.<->.<->.<->' '^[-[:alnum:]]##(.[-[:alnum:]]##)##' '*@*'
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<->.<->.<->|(|::)([[:xdigit:].]##:(#c,2))##(|%*))' '127.0.0.<->' '255.255.255.255' '::1' 'fe80::*'
 
+# load ansible completions
+if command -v register-python-argcomplete >/dev/null && command -v ansible >/dev/null; then
+  eval $(register-python-argcomplete ansible)
+  eval $(register-python-argcomplete ansible-config)
+  eval $(register-python-argcomplete ansible-console)
+  eval $(register-python-argcomplete ansible-doc)
+  eval $(register-python-argcomplete ansible-galaxy)
+  eval $(register-python-argcomplete ansible-inventory)
+  eval $(register-python-argcomplete ansible-playbook)
+  eval $(register-python-argcomplete ansible-pull)
+  eval $(register-python-argcomplete ansible-vault)
+fi
+
 # automatically load bash completion functions
 autoload -U +X bashcompinit && bashcompinit
 
