@@ -39,68 +39,61 @@ if [[ -d "$HOME/.local/src/fzf" ]]; then
   export DISABLE_FZF_AUTO_COMPLETION DISABLE_FZF_KEY_BINDINGS
 fi
 
+
 # HOMEBREW
 brew_binary=''
 [[ -x "/opt/homebrew/bin/brew" ]] && brew_binary="/opt/homebrew/bin/brew"
 [[ -x "$HOME/.local/homebrew/bin/brew" ]] && brew_binary="$HOME/.local/homebrew/bin/brew"
 
-# PATH
+typeset -U path
+typeset -U fpath
+
+# Prepend local bin and Homebrew paths if available
 if [[ -n "${brew_binary}" ]]; then
   eval "$(${brew_binary} shellenv)"
   export HOMEBREW_NO_ANALYTICS=1
 
-  typeset -U path
   path=(
-    "$HOME/.local/bin"
-    "$HOMEBREW_PREFIX/bin"
-    "$HOMEBREW_PREFIX/sbin"
-    $path
+    "${HOME}/.local/bin"
+    "${HOMEBREW_PREFIX}/bin"
+    "${HOMEBREW_PREFIX}/sbin"
+    ${path}
   )
 
-  typeset -U fpath
   fpath=(
-      "$ZDOTDIR/functions"
-      "$ZDOTDIR/completions"
-      "$HOMEBREW_PREFIX/share/zsh/site-functions"
-      $fpath
+    "${ZDOTDIR}/functions"
+    "${ZDOTDIR}/completions"
+    "${HOMEBREW_PREFIX}/share/zsh/site-functions"
+    ${fpath}
   )
 else
-  typeset -U path
-  path=(
-    "$HOME/.local/bin"
-    $path
-  )
-
-  typeset -U fpath
-  fpath=(
-      "$ZDOTDIR/functions"
-      "$ZDOTDIR/completions"
-      $fpath
-  )
+  path=("${HOME}/.local/bin" ${path})
+  fpath=("${ZDOTDIR}/functions" "${ZDOTDIR}/completions" ${fpath})
 fi
 
-export FPATH PATH
+export PATH FPATH
 
 # LS
-LS_COLORS=${LS_COLORS:-'no=00:fi=00:di=01;34:ln=36:su=01;04;37:sg=01;04;37:bd=01;33:pi=04;01;36:so=04;33:cd=33:or=31:mi=01;37;41:ex=01;36:su=01;04;37:sg=01;04;37:'}
-
-# MISE
-# eval "$(mise activate zsh --shims)"
+: ${LS_COLORS:='no=00:fi=00:di=01;34:ln=36:su=01;04;37:sg=01;04;37:bd=01;33:pi=04;01;36:so=04;33:cd=33:or=31:mi=01;37;41:ex=01;36:su=01;04;37:sg=01;04;37:'}
+export LS_COLORS
 
 # SSH Keys
-if [[ ! -v SSH_CONNECTION ]] || [[ ! -v SSH_TTY ]]; then
+if [[ -z "${SSH_AUTH_SOCK}" ]]; then
   if ! ssh-add -q -L >/dev/null; then
     case $(uname -s) in
       "Darwin")
-        ssh-add --apple-load-keychain
+        ssh-add --apple-load-keychain 2>/dev/bull
         ;;
       "Linux")
-        if grep -qslR "PRIVATE" "$HOME/.ssh/"; then
-          ssh-add -l >/dev/null || ( grep -slR "PRIVATE" "$HOME/.ssh/" | xargs ssh-add )
+        if grep -qslR "PRIVATE" "${HOME}/.ssh/"; then
+          ssh-add -l >/dev/null || ( grep -slR "PRIVATE" "${HOME}/.ssh/" | xargs ssh-add )
         fi
         ;;
     esac
   fi
 fi
+
+# Extras
+umask 077
 
 # vim: ft=zsh ts=2 sts=2 sw=2 sr et
