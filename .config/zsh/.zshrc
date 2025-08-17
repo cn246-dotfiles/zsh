@@ -6,8 +6,7 @@ autoload -U compaudit zmv zrecompile
 plugins=(gpg-agent vi-mode)
 
 is_plugin() {
-  local base_dir=$1
-  local name=$2
+  local base_dir=$1 name=$2
   builtin test -f $base_dir/plugins/$name/$name.plugin.zsh \
     || builtin test -f $base_dir/plugins/$name/_$name
 }
@@ -22,17 +21,18 @@ for plugin ($plugins); do
   fi
 done
 
-unset plugin
+unset plugin is_plugin
 
 # Config files
-for config_file ("$ZDOTDIR"/lib/*.zsh); do
-  source "$config_file"
+for config_file ("$ZDOTDIR"/lib/*.zsh(N)); do
+  source "${config_file}"
 done
 
 # # Functions
-if [ -d "$ZDOTDIR"/functions ]; then
-  for file ("$ZDOTDIR"/functions/*); do
-    autoload -U "$file"
+if [ -d "${ZDOTDIR}/functions" ]; then
+  for file in ${ZDOTDIR}/functions/*; do
+    [[ -f "${file}" ]] || continue
+    autoload -Uz "${file:t}"
   done
 fi
 
@@ -59,14 +59,9 @@ setopt prompt_subst
 
 if [ -d "$ZDOTDIR"/prompts ]; then
   fpath=("$ZDOTDIR"/prompts $fpath)
-  source "$ZDOTDIR/prompts/prompt_chaz_setup"
-  # for file ("$ZDOTDIR"/prompts/*); do
-  #   autoload -U "$file"
-  # done
+  autoload -Uz prompt_chaz_setup
+  prompt_chaz_setup
 fi
-
-# autoload -U promptinit && promptinit
-# prompt chaz
 
 # Set venv prompt when using vim terminal
 if [ -v VIMRUNTIME ] && [ -v VIRTUAL_ENV ]; then
@@ -74,10 +69,9 @@ if [ -v VIMRUNTIME ] && [ -v VIRTUAL_ENV ]; then
   export PS1
 fi
 
-# Extras
-umask 077
-
-eval "$($HOME/.local/bin/mise activate zsh)"
+if command -v mise &>/dev/null; then
+  eval "$($HOME/.local/bin/mise activate zsh)"
+fi
 
 # zprof
 # vim: ft=zsh ts=2 sts=2 sw=2 sr et
