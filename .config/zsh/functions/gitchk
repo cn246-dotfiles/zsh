@@ -1,4 +1,18 @@
-find . -maxdepth 1 -mindepth 1 -type d -exec \
-  sh -c '(echo $1 && cd $1 && git fetch --all; git status -uno && echo)' _ {} \;
+git_recurse() {
+  local dir
+  for dir in ./*(/); do
+    if [[ -d "${dir}/.git" ]]; then
+      printf '%s\n' ">>> ${dir}"
+      (
+        cd "${dir}" || return
+        git fetch --all --quiet
+        git status -uno
+        echo
+      )
+    fi
+  done
+}
+
+git_recurse
 
 # vim: ft=zsh ts=2 sts=2 sw=2 sr et
