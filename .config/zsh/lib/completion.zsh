@@ -12,63 +12,90 @@ bindkey -M menuselect '^xh' accept-and-hold                # Hold
 bindkey -M menuselect '^xn' accept-and-infer-next-history  # Next
 bindkey -M menuselect '^xu' undo                           # Undo
 
-# Options
+# Completion options
 _comp_options+=(globdots)
 unsetopt menu_complete
-setopt automenu
-#setopt noautomenu
-#setopt nomenucomplete
-setopt auto_list
-setopt complete_in_word
-#setopt always_to_end
+setopt automenu auto_list complete_in_word
+# setopt noautomenu nomenucomplete always_to_end
 
-# Load compinit
 autoload -Uz compinit
 
 # Load fzf completions
-source <(fzf --zsh)
+if ! (( $+functions[_fzf_complete] )); then
+  FZF_DIR="${HOME}/.local/src/fzf/shell"
+  [[ -r "$FZF_DIR/completion.zsh" ]] && source "$FZF_DIR/completion.zsh"
+  [[ -r "$FZF_DIR/key-bindings.zsh" ]] && source "$FZF_DIR/key-bindings.zsh"
+fi
 
+# Zsh completion initialization
+# - Fast startup via compinit -C
+# - Rebuilds stale .zcompdump in the background
+# - Prevents multiple tabs from rebuilding at the same time
+
+# Lockfile to serialize background rebuilds
+zcompdump_lock="${ZCOMPDUMP}.lock"
+
+# Check if the dump is stale or missing
+# - (#qN.mh+24) -> only matches if $ZCOMPDUMP modified in last 24h
+# - -s "$ZCOMPDUMP.zwc" -> check if binary compiled dump exists
+# - "$ZCOMPDUMP" -nt "$ZCOMPDUMP.zwc" -> rebuild if source newer than binary
 if [[ -n "$ZCOMPDUMP"(#qN.mh+24) && (! -s "$ZCOMPDUMP.zwc" || "$ZCOMPDUMP" -nt "$ZCOMPDUMP.zwc") ]]; then
-  compinit -d "$ZCOMPDUMP"
-  zcompile "$ZCOMPDUMP"
+  # Fast startup: trust current dump even if stale
+  compinit -C -d "$ZCOMPDUMP"
+    # Background rebuild in a subshell
+  {
+    # Only one tab will succeed in creating the lock directory
+    if mkdir "$zcompdump_lock" 2>/dev/null; then
+
+      # Full rebuild of the .zcompdump file
+      compinit -d "$ZCOMPDUMP"
+
+      # Compile the dump to binary for faster future startups
+      # -R = replace atomically
+      # -- = end of options (safe if filename has dashes)
+      zcompile -R -- "$ZCOMPDUMP"
+
+      # Release the lock for other tabs
+      rmdir "$zcompdump_lock"
+    fi
+  } &!  # &! = run in background, suppress job control messages
 else
+  # If dump is fresh, just trust it (fastest path)
   compinit -C -d "$ZCOMPDUMP"
 fi
 
 # Defaults
 zstyle ':completion:*:*:*:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:default' list-prompt '%S%M matches%s'
-
-# Use caching so that commands like apt and dpkg complete are useable
 zstyle ':completion:*' use-cache yes
 zstyle ':completion:*' cache-path $ZSH_CACHE_DIR
 
 # case insensitive (all), partial-word and substring completion
-if [[ "$CASE_SENSITIVE" = true ]]; then
+if [[ "${CASE_SENSITIVE:-false}" == true ]]; then
   zstyle ':completion:*' matcher-list 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
   setopt CASE_GLOB
 else
-  zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+  zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' \
+    'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
   unsetopt CASE_GLOB
 fi
-unset CASE_SENSITIVE
 
 # Group matches and describe
 zstyle ':completion:*:*:*:*:*' menu select interactive
-zstyle ':completion:*:descriptions' format 'Completing %d'
+zstyle ':completion:*:descriptions' format '%F{green}-- %d --%f'
+zstyle ':completion:*:corrections' format '%F{yellow}!- %d (errors: %e) -!%f'
 zstyle ':completion:*:matches' group 'yes'
-zstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*:messages' format ' %F{purple} -- %d --%f'
 zstyle ':completion:*:options' auto-description '%d'
-zstyle ':completion:*:*:*:*:corrections' format '%F{yellow}!- %d (errors: %e) -!%f'
-zstyle ':completion:*:*:*:*:descriptions' format '%F{blue}-- %D %d --%f'
-zstyle ':completion:*:*:*:*:messages' format ' %F{purple} -- %d --%f'
-zstyle ':completion:*:*:*:*:warnings' format ' %F{red}-- no matches found --%f'
-zstyle ':completion:*' format ' %F{yellow}-- %d --%f'
+zstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*:warnings' format ' %F{red}-- no matches found --%f'
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*' verbose yes
 
 # Matching
-zstyle ':completion:*' completer _extensions _complete _approximate
+# zstyle ':completion:*' completer _extensions _complete _approximate
+zstyle ':completion:*:commands' completer _complete _approximate
+zstyle ':completion:*' completer _extensions _complete
 zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:approximate:*' max-errors 1 numeric
 
@@ -100,22 +127,25 @@ zstyle ':completion:*:history-words' menu yes
 #bindkey '^Xa' alias-expension
 #zstyle ':completion:alias-expension:*' completer _expand_alias
 
-zstyle ':completion:*:(rm|kill|diff):*' ignore-line other
-zstyle ':completion:*:rm:*' file-patterns '*:all-files'
-
 # Required for completion to be in good groups (named after the tags)
 zstyle ':completion:*:*:-command-:*:*' group-order aliases builtins functions commands
 zstyle ':completion:*' keep-prefix true
 
-# Create array of Included files in ~/.ssh/config
-includes=(${=${${${${(@M)${(f)"$(<~/.ssh/config 2>/dev/null)"}:#Include *}#Include }:#*\**}:#*\?*}})
-all_hosts=(
-  ${=${${${${(@M)${(f)"$(<~/.ssh/config 2>/dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
-  ${=${${${${(@M)${(f)"$(<~/.ssh/${^includes} 2>/dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
-  ${=${=${=${${(f)"$(<{/etc/ssh/ssh_,~/.ssh/}known_hosts(|2)(N) 2>/dev/null)"}%%[#| ]*}//\]:[0-9]*/ }//,/ }//\[/ }
-)
+setup_ssh_hosts() {
+  local includes hosts_from_config hosts_from_includes hosts_from_known all_hosts
 
-zstyle -e ':completion:*:hosts' hosts 'reply=(${all_hosts[@]})'
+  # Parse Include directives in ~/.ssh/config
+  includes=(${=${${${${(@M)${(f)"$(<~/.ssh/config 2>/dev/null)"}:#Include *}#Include }:#*\**}:#*\?*}})
+  hosts_from_config=(${=${${${${(@M)${(f)"$(<~/.ssh/config 2>/dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}})
+  hosts_from_includes=(${=${${${${(@M)${(f)"$(<~/.ssh/${^includes} 2>/dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}})
+  hosts_from_known=(${=${=${=${${(f)"$(<{/etc/ssh/ssh_,~/.ssh/}known_hosts(|2)(N) 2>/dev/null)"}%%[#| ]*}//\]:[0-9]*/ }//,/ }//\[/ })
+  all_hosts=(${hosts_from_config[@]} ${hosts_from_includes[@]} ${hosts_from_known[@]})
+
+  reply=(${all_hosts[@]})
+}
+
+# Lazy evaluation for :completion:*:hosts
+zstyle -e ':completion:*:hosts' hosts 'setup_ssh_hosts'
 
 # Don't complete uninteresting users
 zstyle ':completion:*:*:*:users' ignored-patterns \
@@ -150,35 +180,81 @@ zstyle ':completion:*:(ssh|scp|rsync):*:hosts-host' ignored-patterns '*(.|:)*' l
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-domain' ignored-patterns '<->.<->.<->.<->' '^[-[:alnum:]]##(.[-[:alnum:]]##)##' '*@*'
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<->.<->.<->|(|::)([[:xdigit:].]##:(#c,2))##(|%*))' '127.0.0.<->' '255.255.255.255' '::1' 'fe80::*'
 
-# load ansible completions
-if command -v register-python-argcomplete >/dev/null && command -v ansible >/dev/null; then
-  eval $(register-python-argcomplete ansible)
-  eval $(register-python-argcomplete ansible-config)
-  eval $(register-python-argcomplete ansible-console)
-  eval $(register-python-argcomplete ansible-doc)
-  eval $(register-python-argcomplete ansible-galaxy)
-  eval $(register-python-argcomplete ansible-inventory)
-  eval $(register-python-argcomplete ansible-playbook)
-  eval $(register-python-argcomplete ansible-pull)
-  eval $(register-python-argcomplete ansible-vault)
-fi
 
-# automatically load bash completion functions
-autoload -U +X bashcompinit && bashcompinit
+# Ansible completions
+_ansible_complete() {
+  unfunction _ansible_complete
+  if ! (( $+functions[bashcompinit] )); then
+    autoload -U +X bashcompinit && bashcompinit
+  fi
+  if command -v register-python-argcomplete >/dev/null; then
+    eval "$(register-python-argcomplete ansible)"
+    for sub in ansible-config ansible-console ansible-doc ansible-galaxy \
+               ansible-inventory ansible-playbook ansible-pull ansible-vault; do
+      eval "$(register-python-argcomplete $sub)"
+    done
+  fi
+}
+compdef _ansible_complete ansible 'ansible-*'
 
-# Load awscli completions
-if command -v aws_completer >/dev/null 2>&1; then
-  complete -C aws_completer aws awslocal
-fi
 
-# Load terraform completions
-if command -v terraform >/dev/null 2>&1; then
-  complete -o nospace -C terraform terraform tf
-fi
+# AWS CLI completions
+_aws_complete() {
+  unfunction _aws_complete
+  if ! (( $+functions[bashcompinit] )); then
+    autoload -U +X bashcompinit && bashcompinit
+  fi
+  if command -v aws_completer >/dev/null 2>&1; then
+    complete -C aws_completer aws awslocal
+  fi
+}
+compdef _aws_complete aws awslocal
 
-# Load terragrunt completions
-if command -v terragrunt >/dev/null 2>&1; then
-  complete -o nospace -C terragrunt tg
-fi
+
+# Terraform completions
+_tf_complete() {
+  unfunction _tf_complete
+  if ! (( $+functions[bashcompinit] )); then
+    autoload -U +X bashcompinit && bashcompinit
+  fi
+  if command -v terraform >/dev/null 2>&1; then
+    complete -o nospace -C terraform terraform tf
+  fi
+}
+compdef _tf_complete terraform tf
+
+
+# Terragrunt completions
+_tg_complete() {
+  unfunction _tg_complete
+  if ! (( $+functions[bashcompinit] )); then
+    autoload -U +X bashcompinit && bashcompinit
+  fi
+  if command -v terragrunt >/dev/null 2>&1; then
+    complete -o nospace -C terragrunt tg
+  fi
+}
+compdef _tg_complete terragrunt tg
+
+
+# # automatically load bash completion functions
+# if ! (( $+functions[bashcompinit] )); then
+#   autoload -U +X bashcompinit && bashcompinit
+# fi
+
+# # Load awscli completions
+# if command -v aws_completer >/dev/null 2>&1; then
+#   complete -C aws_completer aws awslocal
+# fi
+
+# # Load terraform completions
+# if command -v terraform >/dev/null 2>&1; then
+#   complete -o nospace -C terraform terraform tf
+# fi
+
+# # Load terragrunt completions
+# if command -v terragrunt >/dev/null 2>&1; then
+#   complete -o nospace -C terragrunt tg
+# fi
 
 # vim: ft=zsh ts=2 sts=2 sw=2 nosr et
