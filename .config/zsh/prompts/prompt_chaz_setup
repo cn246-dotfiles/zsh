@@ -105,7 +105,7 @@ prompt_chaz_setup() {
   fi
 
   # Build the main prompt
-  prompt=$p_prefix$p_user@$p_host:$p_cwd$p_suffix$p_vcs$p_end
+  PROMPT=$p_prefix$p_user@$p_host:$p_cwd$p_suffix$p_vcs$p_end
 
   # Build the right prompt
   # if [[ -n "$remote_ip" ]]; then
