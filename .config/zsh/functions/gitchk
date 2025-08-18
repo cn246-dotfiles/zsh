@@ -1,14 +1,32 @@
 git_recurse() {
-  local dir
+  local dir subdir
   for dir in ./*(/); do
     if [[ -d "${dir}/.git" ]]; then
-      printf '%s\n' ">>> ${dir}"
+      # Normal repo
+      printf '%s\n' ">>> ${dir} (normal repo)"
       (
         cd "${dir}" || return
         git fetch --all --quiet
         git status -uno
-        echo
+        printf '\n'
       )
+    elif [[ -d "${dir}/repo.git" ]]; then
+      # Worktree repo container
+      printf '%s\n' ">>> ${dir} (worktree parent)"
+      for subdir in "${dir}"/*(/); do
+        # Skip the bare storage dir
+        [[ "${subdir}" == "${dir}/repo.git" ]] && continue
+
+        if git -C "${subdir}" rev-parse --is-inside-work-tree &>/dev/null; then
+          printf '%s\n' "  -> ${subdir}"
+          (
+            cd "${subdir}" || return
+            git fetch --all --quiet
+            git status -uno
+            printf '\n'
+          )
+        fi
+      done
     fi
   done
 }
