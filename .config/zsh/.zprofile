@@ -82,7 +82,7 @@ if [[ -z "${SSH_AUTH_SOCK}" ]]; then
   if ! ssh-add -q -L >/dev/null; then
     case $(uname -s) in
       "Darwin")
-        ssh-add --apple-load-keychain 2>/dev/bull
+        ssh-add --apple-load-keychain 2>/dev/null
         ;;
       "Linux")
         if grep -qslR "PRIVATE" "${HOME}/.ssh/"; then
