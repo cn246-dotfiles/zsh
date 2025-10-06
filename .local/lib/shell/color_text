@@ -22,7 +22,7 @@ code_grnbg() { tput setab 2; tput setaf 0; printf '%s\n' "${1}"; tput sgr0; tput
 # yellow output
 code_yel() { tput setaf 3; printf '%s\n' "${1}"; tput sgr0; }
 code_byel() { tput bold; tput setaf 3; printf '%s\n' "${1}"; tput sgr0; }
-code_yelbg() { tput setab 4; tput setaf 0; printf '%s\n' "${1}"; tput sgr0; tput el; }
+code_yelbg() { tput setab 3; tput setaf 0; printf '%s\n' "${1}"; tput sgr0; tput el; }
 
 # blue output
 code_blu() { tput setaf 4; printf '%s\n' "${1}"; tput sgr0; }
