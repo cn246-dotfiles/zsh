@@ -152,11 +152,17 @@ prompt_chaz_precmd() {
     $(git rev-list --left-right --count HEAD...${hook_com[branch]}@{upstream} 2>/dev/null)
   )
 
-  ahead=${ahead_and_behind[1]}
-  behind=${ahead_and_behind[2]}
+  ahead=${ahead_and_behind[1]:-0}
+  behind=${ahead_and_behind[2]:-0}
 
-  (( $ahead )) && gitstatus+=( " +${ahead}" )
-  (( $behind )) && gitstatus+=( " -${behind}" )
+  ahead=${ahead//[[:space:]]/}
+  behind=${behind//[[:space:]]/}
+
+  (( ahead )) && gitstatus+=( " +${ahead}" )
+  (( behind )) && gitstatus+=( " -${behind}" )
+
+  # (( $ahead )) && gitstatus+=( " +${ahead}" )
+  # (( $behind )) && gitstatus+=( " -${behind}" )
 
   hook_com[misc]+=${(j:/:)gitstatus}
 }
