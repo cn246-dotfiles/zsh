@@ -17,7 +17,7 @@ export LESSOPEN="|$HOME/.local/bin/lesspipe.sh %s"
 # PYTHON
 # https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH
 # https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUSERBASE
-export PYTHONPATH="$HOME/Projects/programming/python/modules"
+export PYTHONPATH="$HOME/.local/lib/python3/site-packages:$PYTHONPATH"
 export PYTHONUSERBASE="$HOME/.local"
 export UV_NO_MODIFY_PATH=1
 
