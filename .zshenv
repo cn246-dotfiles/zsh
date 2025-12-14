@@ -12,7 +12,7 @@ export SUDO_EDITOR=$EDITOR
 # LESS
 export PAGER=less
 export LESS='--mouse -F -i -R -Q -J -M -W -X -x4 -z-4'
-export LESSOPEN="|$HOME/.local/bin/lesspipe.sh %s"
+export LESSOPEN="|/opt/homebrew/bin/lesspipe.sh %s"
 
 # PYTHON
 # https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH
