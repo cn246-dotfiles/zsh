@@ -22,7 +22,7 @@ autoload -Uz compinit
 
 # Load fzf completions
 if ! (( $+functions[_fzf_complete] )); then
-  FZF_DIR="${HOME}/.local/src/fzf/shell"
+  FZF_DIR="${HOMEBREW_PREFIX}/opt/fzf/shell"
   [[ -r "$FZF_DIR/completion.zsh" ]] && source "$FZF_DIR/completion.zsh"
   [[ -r "$FZF_DIR/key-bindings.zsh" ]] && source "$FZF_DIR/key-bindings.zsh"
 fi
