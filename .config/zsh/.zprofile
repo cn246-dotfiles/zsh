@@ -1,7 +1,6 @@
 # HOMEBREW
 brew_binary=''
 [[ -x "/opt/homebrew/bin/brew" ]] && brew_binary="/opt/homebrew/bin/brew"
-[[ -x "$HOME/.local/homebrew/bin/brew" ]] && brew_binary="$HOME/.local/homebrew/bin/brew"
 
 typeset -U path
 typeset -U fpath
@@ -13,15 +12,12 @@ if [[ -n "${brew_binary}" ]]; then
 
   path=(
     "${HOME}/.local/bin"
-    "${HOMEBREW_PREFIX}/bin"
-    "${HOMEBREW_PREFIX}/sbin"
     ${path}
   )
 
   fpath=(
     "${ZDOTDIR}/functions"
     "${ZDOTDIR}/completions"
-    "${HOMEBREW_PREFIX}/share/zsh/site-functions"
     ${fpath}
   )
 else
@@ -32,11 +28,10 @@ fi
 export PATH FPATH
 
 # FZF
-if [[ -d "${HOMEBREW_PREFIX}/opt/fzf" ]]; then
+if command -v fzf >/dev/null 2>&1; then
   # Setup
   DISABLE_FZF_AUTO_COMPLETION="false"
   DISABLE_FZF_KEY_BINDINGS="false"
-  FZF_BASE="${HOMEBREW_PREFIX}/opt/fzf/"
 
   # Default options
   FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git/*"'
@@ -66,7 +61,6 @@ if [[ -d "${HOMEBREW_PREFIX}/opt/fzf" ]]; then
   FZF_CTRL_T_OPTS="${FZF_CTRL_T_OPTS} --bind 'ctrl-f:change-prompt(Files> )+reload(find . -mindepth 1 -maxdepth 1 -type f | cut -d'/' -f2)'"
   FZF_CTRL_T_OPTS="${FZF_CTRL_T_OPTS} --preview '(bat {} || tree -C {}) 2> /dev/null | head -200'"
 
-  export FZF_BASE
   export FZF_DEFAULT_COMMAND FZF_ALT_C_COMMAND FZF_CTRL_T_COMMAND
   export FZF_DEFAULT_OPTS FZF_ALT_C_OPTS FZF_CTRL_R_OPTS FZF_CTRL_T_OPTS
   export DISABLE_FZF_AUTO_COMPLETION DISABLE_FZF_KEY_BINDINGS

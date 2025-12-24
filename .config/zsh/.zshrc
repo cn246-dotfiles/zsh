@@ -69,8 +69,14 @@ if [ -v VIMRUNTIME ] && [ -v VIRTUAL_ENV ]; then
   export PS1
 fi
 
+# Mise
 if command -v mise &>/dev/null; then
   eval "$($HOME/.local/bin/mise activate zsh)"
+fi
+
+# Yamlfix
+if [[ -f "$HOME/.config/yamlfix/yamlfix" ]]; then
+  source "$HOME/.config/yamlfix/yamlfix"
 fi
 
 # zprof

@@ -14,19 +14,10 @@ export PAGER=less
 export LESS='--mouse -F -i -R -Q -J -M -W -X -x4 -z-4'
 export LESSOPEN="|/opt/homebrew/bin/lesspipe.sh %s"
 
-# PYTHON
-# https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH
-# https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUSERBASE
-export PYTHONPATH="$HOME/.local/lib/python3/site-packages:$PYTHONPATH"
-export PYTHONUSERBASE="$HOME/.local"
-export UV_NO_MODIFY_PATH=1
-
 # RIPGREP
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/ripgreprc"
 
-# YAMLFIX
-if [[ -f "$HOME/.config/yamlfix/yamlfix" ]]; then
-  source "$HOME/.config/yamlfix/yamlfix"
-fi
+# UV
+export UV_NO_MODIFY_PATH=1
 
 # vim: ft=zsh ts=2 sts=2 sw=2 sr et
