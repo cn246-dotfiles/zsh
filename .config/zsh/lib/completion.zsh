@@ -180,81 +180,27 @@ zstyle ':completion:*:(ssh|scp|rsync):*:hosts-host' ignored-patterns '*(.|:)*' l
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-domain' ignored-patterns '<->.<->.<->.<->' '^[-[:alnum:]]##(.[-[:alnum:]]##)##' '*@*'
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<->.<->.<->|(|::)([[:xdigit:].]##:(#c,2))##(|%*))' '127.0.0.<->' '255.255.255.255' '::1' 'fe80::*'
 
-
-# Ansible completions
-_ansible_complete() {
-  unfunction _ansible_complete
-  if ! (( $+functions[bashcompinit] )); then
-    autoload -U +X bashcompinit && bashcompinit
-  fi
-  if command -v register-python-argcomplete >/dev/null; then
-    eval "$(register-python-argcomplete ansible)"
-    for sub in ansible-config ansible-console ansible-doc ansible-galaxy \
-               ansible-inventory ansible-playbook ansible-pull ansible-vault; do
-      eval "$(register-python-argcomplete $sub)"
-    done
-  fi
-}
-compdef _ansible_complete ansible 'ansible-*'
-
+# Enable bash-style completion functions in zsh (only when needed)
+if ! (( $+functions[bashcompinit] )); then
+  autoload -U +X bashcompinit && bashcompinit
+fi
 
 # AWS CLI completions
-_aws_complete() {
-  unfunction _aws_complete
-  if ! (( $+functions[bashcompinit] )); then
-    autoload -U +X bashcompinit && bashcompinit
-  fi
-  if command -v aws_completer >/dev/null 2>&1; then
-    complete -C aws_completer aws awslocal
-  fi
-}
-compdef _aws_complete aws awslocal
-
+if command -v aws_completer >/dev/null 2>&1; then
+  complete -C aws_completer aws
+  complete -C aws_completer awslocal
+fi
 
 # Terraform completions
-_tf_complete() {
-  unfunction _tf_complete
-  if ! (( $+functions[bashcompinit] )); then
-    autoload -U +X bashcompinit && bashcompinit
-  fi
-  if command -v terraform >/dev/null 2>&1; then
-    complete -o nospace -C terraform terraform tf
-  fi
-}
-compdef _tf_complete terraform tf
-
+ if command -v terraform >/dev/null 2>&1; then
+  complete -o nospace -C terraform terraform
+  complete -o nospace -C terraform tf
+ fi
 
 # Terragrunt completions
-_tg_complete() {
-  unfunction _tg_complete
-  if ! (( $+functions[bashcompinit] )); then
-    autoload -U +X bashcompinit && bashcompinit
-  fi
-  if command -v terragrunt >/dev/null 2>&1; then
-    complete -o nospace -C terragrunt tg
-  fi
-}
-compdef _tg_complete terragrunt tg
-
-
-# # automatically load bash completion functions
-# if ! (( $+functions[bashcompinit] )); then
-#   autoload -U +X bashcompinit && bashcompinit
-# fi
-
-# # Load awscli completions
-# if command -v aws_completer >/dev/null 2>&1; then
-#   complete -C aws_completer aws awslocal
-# fi
-
-# # Load terraform completions
-# if command -v terraform >/dev/null 2>&1; then
-#   complete -o nospace -C terraform terraform tf
-# fi
-
-# # Load terragrunt completions
-# if command -v terragrunt >/dev/null 2>&1; then
-#   complete -o nospace -C terragrunt tg
-# fi
+if  command -v terragrunt >/dev/null 2>&1; then
+  complete -o nospace -C terragrunt
+  complete -o nospace -C tg
+fi
 
 # vim: ft=zsh ts=2 sts=2 sw=2 nosr et
