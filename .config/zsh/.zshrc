@@ -3,7 +3,7 @@
 autoload -U compaudit zmv zrecompile
 
 # Plugins
-plugins=(gpg-agent vi-mode)
+plugins=(direnv gpg-agent vi-mode)
 
 is_plugin() {
   local base_dir=$1 name=$2
@@ -77,6 +77,11 @@ fi
 # Yamlfix
 if [[ -f "$HOME/.config/yamlfix/yamlfix" ]]; then
   source "$HOME/.config/yamlfix/yamlfix"
+fi
+
+# Direnv
+if command -v direnv >/dev/null 2&>1; then
+  eval "$(direnv hook zsh)"
 fi
 
 # zprof
