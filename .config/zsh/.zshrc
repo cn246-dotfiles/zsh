@@ -80,7 +80,7 @@ if [[ -f "$HOME/.config/yamlfix/yamlfix" ]]; then
 fi
 
 # Direnv
-if command -v direnv >/dev/null 2&>1; then
+if command -v direnv >/dev/null 2>&1; then
   eval "$(direnv hook zsh)"
 fi
 
