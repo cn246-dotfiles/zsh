@@ -79,10 +79,5 @@ if [[ -f "$HOME/.config/yamlfix/yamlfix" ]]; then
   source "$HOME/.config/yamlfix/yamlfix"
 fi
 
-# Direnv
-if command -v direnv >/dev/null 2>&1; then
-  eval "$(direnv hook zsh)"
-fi
-
 # zprof
 # vim: ft=zsh ts=2 sts=2 sw=2 sr et
