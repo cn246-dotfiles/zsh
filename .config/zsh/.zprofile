@@ -49,9 +49,9 @@ if command -v fzf >/dev/null 2>&1; then
   # History options
   FZF_CTRL_R_OPTS="--no-sort --padding=0,1,1 --color header:italic --exact"
   FZF_CTRL_R_OPTS="${FZF_CTRL_R_OPTS} --header-first --header-border=double"
-  FZF_CTRL_R_OPTS="${FZF_CTRL_R_OPTS} --header 'Press ? to toggle preview\nPress CTRL+Y to copy command into clipboard'"
-  FZF_CTRL_R_OPTS="${FZF_CTRL_R_OPTS} --preview 'echo {}' --preview-window down:20%:hidden:wrap"
-  FZF_CTRL_R_OPTS="${FZF_CTRL_R_OPTS} --bind '?:toggle-preview'"
+  FZF_CTRL_R_OPTS="${FZF_CTRL_R_OPTS} --header 'Press CTRL+Y to copy command into clipboard'"
+  # FZF_CTRL_R_OPTS="${FZF_CTRL_R_OPTS} --preview 'echo {}' --preview-window down:20%:hidden:wrap"
+  # FZF_CTRL_R_OPTS="${FZF_CTRL_R_OPTS} --bind '?:toggle-preview'"
   FZF_CTRL_R_OPTS="${FZF_CTRL_R_OPTS} --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'"
 
   # File list options

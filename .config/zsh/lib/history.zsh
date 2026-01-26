@@ -1,33 +1,27 @@
-export HIST_STAMPS="mm/dd/yyyy"
-export HISTFILE="$ZDOTDIR/log/zsh_history"
-HISTSIZE=50000
-SAVEHIST=10000
+HISTFILE="$HOME/.local/state/zsh/history"
+HISTSIZE=200000
+SAVEHIST=200000
+export HISTFILE HISTSIZE SAVEHIST
 
-alias history='zsh_history -i'
+alias h="fc -li 1"
 
-## History wrapper
-function zsh_history {
-  local clear list
-  zparseopts -E c=clear l=list
+# Ensure history dir exists
+mkdir -p -- "${HISTFILE:h}"
 
-  if [[ -n "$clear" ]]; then
-    # if -c provided, clobber the history file
-    echo -n >| "$HISTFILE"
-    fc -p "$HISTFILE"
-    echo >&2 History file deleted.
-  elif [[ -n "$list" ]]; then
-    # if -l provided, run as if calling `fc' directly
-    builtin fc "$@"
-  else
-    # unless a number is provided, show all history events (starting from 1)
-    [[ ${@[-1]-} = *[0-9]* ]] && builtin fc -l "$@" || builtin fc -l "$@" 1
-  fi
-}
+# History command configuration
+setopt extended_history       # store timestamps + durations
+setopt append_history         # don't overwrite history file
+setopt inc_append_history     # write history incrementally (better multi-shell)
+setopt hist_fcntl_lock        # safer concurrent writes
 
-## History command configuration
-setopt extended_history       # record timestamp of command in HISTFILE
-setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
-setopt hist_ignore_dups       # ignore duplicated commands history list
+unsetopt share_history         # avoid live-merging weirdness
+
 setopt hist_ignore_space      # ignore commands that start with space
+setopt hist_reduce_blanks     # trim extra internal whitespace
 setopt hist_verify            # show command with history expansion to user before running it
-setopt share_history          # share command history data
+
+setopt hist_find_no_dups      # skip dupes when searching
+setopt hist_ignore_dups       # ignore duplicated commands history list
+setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
+
+# vim: ft=zsh ts=2 sts=2 sw=2 sr et
