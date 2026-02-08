@@ -1,6 +1,11 @@
+# Performance profiling (uncomment to enable)
 # zmodload zsh/zprof
+
 # Load all stock functions (from $fpath files) called below.
 autoload -U compaudit zmv zrecompile
+
+# Source environment setup (FZF, LS_COLORS, etc.)
+source "$ZDOTDIR/lib/environment.zsh"
 
 # Plugins
 plugins=(direnv gpg-agent vi-mode)
@@ -28,7 +33,7 @@ for config_file ("$ZDOTDIR"/lib/*.zsh(N)); do
   source "${config_file}"
 done
 
-# # Functions
+# Functions - autoload all custom functions from the functions directory
 if [ -d "${ZDOTDIR}/functions" ]; then
   for file in ${ZDOTDIR}/functions/*; do
     [[ -f "${file}" ]] || continue
@@ -50,7 +55,7 @@ setopt long_list_jobs
 # ZLE
 setopt combining_chars
 
-# Safe paste
+# Safe paste - prevents execution of pasted commands
 autoload -Uz bracketed-paste-magic
 zle -N bracketed-paste bracketed-paste-magic
 
@@ -69,9 +74,9 @@ if [ -v VIMRUNTIME ] && [ -v VIRTUAL_ENV ]; then
   export PS1
 fi
 
-# Mise
-if command -v mise &>/dev/null; then
-  eval "$($HOME/.local/bin/mise activate zsh)"
+# Node
+if command -v fnm >/dev/null 2>&1; then
+  eval "$(fnm env --use-on-cd)"
 fi
 
 # Yamlfix
@@ -79,5 +84,10 @@ if [[ -f "$HOME/.config/yamlfix/yamlfix" ]]; then
   source "$HOME/.config/yamlfix/yamlfix"
 fi
 
+# SSH key loading
+source "$ZDOTDIR/lib/ssh.zsh"
+
+# Performance profiling output (uncomment to enable)
 # zprof
+
 # vim: ft=zsh ts=2 sts=2 sw=2 sr et
