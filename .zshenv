@@ -9,13 +9,23 @@ export EDITOR=vim
 export VISUAL=$EDITOR
 export SUDO_EDITOR=$EDITOR
 
+# GO
+export GOPATH="${HOME}/.local/share/go"
+
 # LESS
 export PAGER=less
 export LESS='--mouse -F -i -R -Q -J -M -W -X -x4 -z-4'
 export LESSOPEN="|/opt/homebrew/bin/lesspipe.sh %s"
 
+# NODE
+export FNM_DIR="${HOME}/.local/share/fnm"
+
 # RIPGREP
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/ripgreprc"
+
+# RUST
+export CARGO_HOME="${HOME}/.local/share/cargo"
+export RUSTUP_HOME="${HOME}/.local/share/rustup"
 
 # UV
 export UV_NO_MODIFY_PATH=1
